@@ -156,10 +156,10 @@ function PreviewCard({
     >
       <div className="flip-inner relative h-full w-full">
         <div className="flip-face absolute inset-0 flex flex-col items-center justify-center gap-2.5 rounded-xl bg-card px-4 text-center ring-1 ring-rule">
+          <CategoryMark front={card.front} className="size-7 text-ink-soft/70" />
           <span className="font-display text-[1.0625rem] leading-tight font-bold text-balance whitespace-pre-wrap">
             {card.front}
           </span>
-          <CategoryMark front={card.front} className="size-6 text-ink-soft/70" />
         </div>
         <div className="flip-back flip-face absolute inset-0 flex items-center justify-center rounded-xl bg-card px-4 text-center ring-1 ring-tangerine/70">
           <span className="text-[0.875rem] text-balance whitespace-pre-wrap text-ink-soft">

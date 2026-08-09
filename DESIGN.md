@@ -87,7 +87,7 @@ The printed artifact follows the same system, adapted for ink economy. It is des
 
 ### Category ornaments
 
-A card front that names a category prints that category's mark beneath it. The marks are line art in a 24x24 box, one grey, sized to about 12mm, and they have to survive a mono laser at that size: no fine hatching, no fills that clog.
+A card front that names a category prints that category's mark above it. Mark and label are laid out as one composition and centred together, never with the mark pinned to the card edge: pinning left a one-word label floating far from its mark while a three-line label sat tight against one, so the spacing read as accidental from card to card. The marks are line art in a 24x24 box, one grey, sized to about 12mm, and they have to survive a mono laser at that size: no fine hatching, no fills that clog.
 
 | Category | Mark | Why |
 |---|---|---|

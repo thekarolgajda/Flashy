@@ -212,28 +212,16 @@ const GUIDE_INK = rgb(0.84, 0.83, 0.8);
 const TRIM_INK = rgb(0.66, 0.65, 0.62);
 const ORNAMENT_INK = rgb(0.55, 0.54, 0.51);
 
-function drawCardText(
+/** Draws wrapped lines downward from the top of the text block. */
+function drawLines(
   page: PDFPage,
   box: Box,
-  text: string,
+  lines: string[],
+  size: number,
   font: PDFFont,
-  maxSize: number,
-  reserveOrnament = false,
+  blockTop: number,
 ) {
-  if (text === "") return;
-
-  const maxWidth = box.width - CARD_PADDING * 2;
-  const maxHeight =
-    box.height - CARD_PADDING * 2 - (reserveOrnament ? ORNAMENT_BAND : 0);
-  const { size, lines } = fitText(text, font, maxWidth, maxHeight, maxSize);
-
-  const blockHeight = lines.length * size * LINE_HEIGHT;
-  // Optical centring: a block centred on the true middle reads as sitting low,
-  // so lift it by a small fraction of the card height.
-  const opticalLift =
-    box.height * 0.022 + (reserveOrnament ? ORNAMENT_BAND / 2 : 0);
-  let baseline =
-    box.y + box.height / 2 + blockHeight / 2 - size * LINE_HEIGHT + opticalLift;
+  let baseline = blockTop - size * LINE_HEIGHT;
 
   for (const line of lines) {
     const width = font.widthOfTextAtSize(line, size);
@@ -248,8 +236,71 @@ function drawCardText(
   }
 }
 
-/** Height reserved under a front's text for its ornament. */
-const ORNAMENT_BAND = 54;
+/**
+ * Optical centring: a block centred on the true middle of a card reads as
+ * sitting slightly low.
+ */
+function opticalLift(box: Box): number {
+  return box.height * 0.02;
+}
+
+/** Card backs: one centred block of text. */
+function drawCardText(page: PDFPage, box: Box, text: string, font: PDFFont, maxSize: number) {
+  if (text === "") return;
+
+  const { size, lines } = fitText(
+    text,
+    font,
+    box.width - CARD_PADDING * 2,
+    box.height - CARD_PADDING * 2,
+    maxSize,
+  );
+  const blockHeight = lines.length * size * LINE_HEIGHT;
+
+  drawLines(
+    page,
+    box,
+    lines,
+    size,
+    font,
+    box.y + box.height / 2 + blockHeight / 2 + opticalLift(box),
+  );
+}
+
+/**
+ * Card fronts: the category mark, then the label beneath it.
+ *
+ * Mark and text are laid out as one composition and centred together, rather
+ * than the mark being pinned to the card edge. Pinning it left a short label
+ * like "Easy" floating far above its ornament while a three-line label sat
+ * tight against one, so the spacing looked accidental from card to card.
+ */
+function drawCardFront(
+  page: PDFPage,
+  box: Box,
+  text: string,
+  font: PDFFont,
+  maxSize: number,
+  frontText: string,
+) {
+  const markSize = Math.min(34, box.height * 0.19);
+  const gap = Math.min(15, Math.max(8, box.height * 0.05));
+
+  const { size, lines } = fitText(
+    text,
+    font,
+    box.width - CARD_PADDING * 2,
+    box.height - CARD_PADDING * 2 - markSize - gap,
+    maxSize,
+  );
+  const blockHeight = lines.length * size * LINE_HEIGHT;
+
+  const total = markSize + gap + blockHeight;
+  const top = box.y + box.height / 2 + total / 2 + opticalLift(box);
+
+  drawFrontOrnament(page, box, frontText, top - markSize / 2, markSize);
+  drawLines(page, box, lines, size, font, top - markSize - gap);
+}
 
 /**
  * The ornament under a card front: the mark for its category, flanked by
@@ -259,13 +310,18 @@ const ORNAMENT_BAND = 54;
  * type of card it is, without a word of extra furniture, and it is line art so
  * it costs almost nothing on a mono laser printer.
  */
-function drawFrontOrnament(page: PDFPage, box: Box, frontText: string) {
+function drawFrontOrnament(
+  page: PDFPage,
+  box: Box,
+  frontText: string,
+  centerY: number,
+  size: number,
+) {
   const category = categoryFor(frontText);
   const centerX = box.x + box.width / 2;
-  const y = box.y + CARD_PADDING + 20;
+  const y = centerY;
 
   // Marks are authored in a 24x24 box; this scales them to the printed size.
-  const size = Math.min(36, box.height * 0.2);
   const scale = size / 24;
 
   if (category.fill) {
@@ -527,15 +583,14 @@ export async function generateFlashcardPdf(
       );
 
       const frontFont = fontFor(card.front, true);
-      drawCardText(
+      drawCardFront(
         frontPage,
         frontBox,
         sanitize(card.front, frontFont),
         frontFont,
         MAX_FONT_SIZE.front,
-        true,
+        card.front,
       );
-      drawFrontOrnament(frontPage, frontBox, card.front);
 
       const backFont = fontFor(card.back, false);
       drawCardText(
