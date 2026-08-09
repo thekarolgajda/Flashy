@@ -66,7 +66,9 @@ Two traps if you touch this:
 
 ### Categories
 
-`src/lib/categories.ts` maps a card's front text to an ornament. This is how a deck of game cards works with no extra setting: a CSV whose first column reads `Easy` or `Ask Others` is simply recognised, and anything unrecognised gets the default Flashy mark. Marks are SVG path strings in a 24x24 box, consumed by `drawFrontOrnament()` in the PDF and by `CategoryMark` on screen, so the two can never disagree.
+`src/lib/categories.ts` maps a card's front text to an ornament. This is how a deck of game cards works with no extra setting: a CSV whose first column reads `Easy` or `Ask Others` is simply recognised, and anything unrecognised gets the default Flashy mark.
+
+Matching is on **keywords anywhere in the label**, after punctuation is flattened to spaces, not on the whole label. People write these categories the way they say them, so `Possibly Serious or Cringey`, `Serious/Cringey` and `cringe` must all find the same mark. Exact-match was the original implementation and it silently dropped every real-world label to the default. If you add a category, test it against wordy labels, not just the bare noun. Marks are SVG path strings in a 24x24 box, consumed by `drawFrontOrnament()` in the PDF and by `CategoryMark` on screen, so the two can never disagree.
 
 Fronts reserve `ORNAMENT_BAND` of vertical space and lift their text by half of it, which is what keeps a long front from colliding with its mark.
 
