@@ -30,7 +30,7 @@ OKLCH throughout. Every neutral is tinted toward the citrus hue (~96°) so nothi
 
 ## Typography
 
-Two families. **Fraunces** carries the wordmark and section headings, with its WONK axis on: the cocked, slightly hand-cut letterforms are where the product's personality lives, and they keep headings from reading as another neutral geometric sans. **Geist Sans** carries everything else. UI labels, buttons and data never use the display face.
+Two families. **Fraunces** carries the wordmark, section headings, and both sides of a card wherever a card is shown, on screen or in print. Its WONK axis is on: the cocked, slightly hand-cut letterforms are where the product's personality lives, and they keep headings from reading as another neutral geometric sans. **Geist Sans** carries the interface: labels, buttons, help copy, counts. UI chrome never uses the display face, and card content never uses the interface face.
 
 Geist Mono is reserved for the raw input textarea and for literal character listings, where it signals editability and disambiguates glyphs.
 
@@ -40,10 +40,10 @@ Fixed rem scale, ratio ~1.2:
 |---|---|---|
 | `display` | clamp(2.75rem, 7vw, 4.25rem) / 1, Fraunces 700, tracking -0.025em | Wordmark |
 | `heading` | 2rem / 1, Fraunces 700, tracking -0.02em | Section headings |
-| `title` | 1.375rem / 1.2, weight 600 | Section headings |
+| `card` | 1.0625rem / 1.2, Fraunces 700 | Preview card fronts, mirroring the print |
 | `body` | 0.9375rem / 1.5, weight 400 | Default |
 | `label` | 0.8125rem / 1.4, weight 500 | Field labels, controls |
-| `micro` | 0.75rem / 1.4, weight 400 | Help text, counts |
+| `micro` | 0.8125rem / 1.4, weight 400 | Help text, counts. Not below 13px: this is the mobile floor |
 
 Body prose capped at 65ch.
 
@@ -55,6 +55,8 @@ Spacing is deliberately uneven for rhythm: tight within a control group (0.5rem)
 
 The dashed cut-guide line is the recurring motif, borrowed from the PDF: it separates page sections and outlines the sheet diagram, so the app visually quotes its own output.
 
+The three print steps sit full width below both panels, never inside the input column. They reference the flip setting, so on a narrow screen they have to come after it; putting them in the left column made the copy say "above" about a control that had reflowed below.
+
 ## Logo
 
 Two cards caught mid-shuffle, in `src/components/logo.tsx` and mirrored as a favicon in `public/icon.svg`. Keep the two in step if the shapes change. The cards spread apart on hover, which is the one place the logo is allowed to move. The mark is the only rounded-square, saturated-lime element in the product, so it stays distinct from the UI's controls.
@@ -62,10 +64,10 @@ Two cards caught mid-shuffle, in `src/components/logo.tsx` and mirrored as a fav
 ## Components
 
 - **Buttons.** Primary is lime with ink text, radius 0.625rem. Secondary is a 1px `--rule` outline on card. Every button carries default, hover, focus-visible, active, disabled, and loading states.
-- **Segmented control** for the input mode switch: a lime pill slides behind the active segment.
+- **Segmented control**, the single control vocabulary for every either/or choice: input mode, paper, flip edge, cutting guides. A lime pill marks the active segment. There are no native selects or checkboxes left in the product; one affordance covers all of them.
 - **Drop zone.** Dashed `--rule` border, lime tint and border on drag-over.
-- **Sheet diagram.** A live miniature of the chosen grid on the chosen paper, drawn from the same constants as the PDF generator. It is the primary explanation of the layout options; the select is secondary.
-- **Card preview.** Real proportioned mini-cards that flip on hover and focus to reveal the back. Tangerine edge marks the back.
+- **Sheet diagram.** A live miniature of the chosen grid on the chosen paper, drawn from the same constants as the PDF generator, with filled cells showing how much of the sheet the deck uses. The diagrams *are* the layout control: you pick a layout by clicking the sheet you want, not from a list of numbers.
+- **Card preview.** Real proportioned mini-cards carrying the same category mark and the same typeface as the print, which flip on hover and focus to reveal the back. Tangerine edge marks the back.
 - Loading is inline on the action button, never a spinner over content. Empty state teaches the input format rather than saying "nothing here".
 
 ## Motion

@@ -6,13 +6,18 @@ product
 
 ## Users
 
-Anyone who needs physical flashcards: language learners drilling vocabulary, students turning notes into a deck before an exam, teachers printing a set for a class. No login, no account, no library of saved decks. The user arrives with text they already have, in a hurry, and wants paper.
+Anyone who needs physical cards. Two groups, served by the same product:
 
-The job to be done is narrow and complete in one sitting: get text in, get a correct printable PDF out, print it, cut it. Success is a stack of cards where every back is on the correct front.
+- **Studying**: language learners drilling vocabulary, students turning notes into a deck before an exam, teachers printing a set for a class.
+- **Playing**: people making question decks for a game, where the front names a type of card (`Easy`, `Ask Others`) and the back carries the prompt. This came from real use, a family question game, and it is why cards carry category ornaments.
+
+No login, no account, no library of saved decks. The user arrives with text they already have, in a hurry, and wants paper.
+
+The job to be done is narrow and complete in one sitting: get text in, get a correct printable PDF out, print it, cut it. Success is a stack of cards where every back is on the correct front, and which looks like it was made on purpose.
 
 ## Product Purpose
 
-Flashy converts a list of term/definition pairs into a double-sided PDF laid out for duplex printing. It exists because the fiddly part of making physical flashcards is not the writing, it is the layout: getting backs to mirror fronts correctly so they survive a double-sided print.
+Flashy converts a list of card pairs into a double-sided PDF laid out for duplex printing. It exists because the fiddly part of making physical flashcards is not the writing, it is the layout: getting backs to mirror fronts correctly so they survive a double-sided print.
 
 Everything runs in the browser. Card text is never uploaded. That is a real property of the product, not a marketing line, and the interface should quietly reflect it.
 

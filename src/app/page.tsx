@@ -447,7 +447,7 @@ export default function Home() {
                       filled={Math.min(cards.length, count)}
                     />
                     <span
-                      className={`mt-2 block text-[0.75rem] ${
+                      className={`mt-2 block text-[0.8125rem] ${
                         active ? "font-semibold" : "text-ink-soft"
                       }`}
                     >
