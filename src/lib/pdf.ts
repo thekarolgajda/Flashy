@@ -208,8 +208,8 @@ function fitText(
 }
 
 const INK = rgb(0.14, 0.135, 0.12);
-const GUIDE_INK = rgb(0.84, 0.83, 0.8);
-const TRIM_INK = rgb(0.66, 0.65, 0.62);
+const GUIDE_INK = rgb(0.6, 0.59, 0.56);
+const TRIM_INK = rgb(0.42, 0.41, 0.39);
 const ORNAMENT_INK = rgb(0.55, 0.54, 0.51);
 
 /** Draws wrapped lines downward from the top of the text block. */
@@ -349,8 +349,8 @@ function drawFrontOrnament(
  * the cut can be followed without a heavy rule printing between every card.
  */
 function drawCutGuides(page: PDFPage, cols: number, rows: number, w: number, h: number) {
-  const hairline = { thickness: 0.3, color: GUIDE_INK, dashArray: [1.5, 4] };
-  const mark = { thickness: 0.5, color: TRIM_INK };
+  const hairline = { thickness: 0.45, color: GUIDE_INK, dashArray: [2.5, 3] };
+  const mark = { thickness: 0.7, color: TRIM_INK };
   const cellWidth = (w - MARGIN * 2) / cols;
   const cellHeight = (h - MARGIN * 2) / rows;
   const tick = 11;

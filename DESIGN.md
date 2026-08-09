@@ -81,7 +81,7 @@ The printed artifact follows the same system, adapted for ink economy. It is des
 - **Fronts are set in Fraunces**, the same display face as the wordmark, so the card reads in the voice of the app that made it. Backs are Noto Sans, lighter and a size smaller. The weight difference alone tells you which side you are holding. Scripts Fraunces does not cover fall back to their pack's bold weight.
 - **Text is optically centred**, lifted slightly above the true middle, which otherwise reads as sitting low.
 - **Words are never broken.** The type shrinks until every word fits whole. Only scripts written without spaces (CJK) break between characters.
-- **Cut guides use the printer's idiom**: solid trim marks in the margin where the blade starts, and a hairline dashed line across the card area so no heavy rule prints between cards.
+- **Cut guides use the printer's idiom**: solid trim marks in the margin where the blade starts, and a dashed line across the card area so no heavy rule prints between cards. They are drawn dark enough to follow with scissors under ordinary light, which matters more than keeping them invisible: they sit exactly on the cut, so a clean cut removes them anyway.
 - **Sheet furniture lives in the margin**, outside the trim marks: deck name, which side, which sheet. It is cut away with the waste, so it helps you handle the sheets while costing the cards nothing.
 - **No index numbers or page furniture on the cards themselves.** Nothing prints that is not content or ornament.
 
