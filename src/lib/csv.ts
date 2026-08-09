@@ -1,6 +1,6 @@
 /**
  * Minimal RFC 4180 CSV reader. Hand-rolled rather than pulled from npm because
- * the requirement is narrow — two columns of user text — and correct quote
+ * the requirement is narrow (two columns of user text) and correct quote
  * handling is the only hard part.
  */
 

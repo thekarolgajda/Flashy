@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Flashy">
+  <!-- Two cards mid-shuffle: the front and back pair the product exists to make. -->
+  <rect width="64" height="64" rx="15" fill="#4f7a35" />
+  <g transform="translate(32 32)">
+    <rect
+      x="-18"
+      y="-13"
+      width="36"
+      height="26"
+      rx="4"
+      fill="#ded2b4"
+      transform="rotate(-17) translate(-3 -3)"
+    />
+    <g transform="rotate(6) translate(2 3)">
+      <rect
+        x="-18"
+        y="-13"
+        width="36"
+        height="26"
+        rx="4"
+        fill="#fbf9f2"
+        stroke="#4f7a35"
+        stroke-width="2.5"
+      />
+      <line
+        x1="-8.5"
+        y1="0"
+        x2="8.5"
+        y2="0"
+        stroke="#4f7a35"
+        stroke-width="3.4"
+        stroke-linecap="round"
+      />
+    </g>
+  </g>
+</svg>

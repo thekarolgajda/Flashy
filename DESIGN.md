@@ -19,22 +19,27 @@ OKLCH throughout. Every neutral is tinted toward the citrus hue (~96°) so nothi
 | `--ink` | `oklch(0.25 0.018 96)` | Primary text, and label text on lime |
 | `--ink-soft` | `oklch(0.52 0.020 96)` | Secondary text, help copy |
 | `--rule` | `oklch(0.90 0.014 96)` | Borders, dividers, cut-guide motif |
-| `--lime` | `oklch(0.84 0.190 122)` | Primary action, selected state |
-| `--lime-deep` | `oklch(0.60 0.160 128)` | Lime as text or on hover; passes AA on paper |
-| `--tangerine` | `oklch(0.75 0.170 58)` | Card backs, secondary emphasis, warnings |
-| `--berry` | `oklch(0.56 0.200 20)` | Errors only |
+| `--lime` | `oklch(0.81 0.105 132)` | Primary action, selected state |
+| `--lime-deep` | `oklch(0.52 0.098 136)` | Lime as text, step numerals, focus rings; passes AA on paper |
+| `--tangerine` | `oklch(0.70 0.125 55)` | Card backs, secondary emphasis |
+| `--tangerine-deep` | `oklch(0.50 0.115 52)` | Warning text; tangerine itself is too light for body copy |
+| `--berry` | `oklch(0.52 0.190 22)` | Errors only |
+| `--paper-warm` | `oklch(0.90 0.032 92)` | Aged-paper tone, the card behind in the logo |
 
 **Strategy: Committed.** Lime carries the primary action and every selected state; tangerine marks the "back" side of a card throughout the UI, which makes the front/back distinction a color relationship the user learns once and reads everywhere. Both accents are light, so they always carry `--ink` text, never white. Color is never the sole signal: selected states also change weight, and the flip-edge warning carries text.
 
 ## Typography
 
-Geist Sans throughout, one family. Geist Mono only for the raw input textarea and for literal character listings, where it signals editability and disambiguates glyphs.
+Two families. **Fraunces** carries the wordmark and section headings, with its WONK axis on: the cocked, slightly hand-cut letterforms are where the product's personality lives, and they keep headings from reading as another neutral geometric sans. **Geist Sans** carries everything else. UI labels, buttons and data never use the display face.
+
+Geist Mono is reserved for the raw input textarea and for literal character listings, where it signals editability and disambiguates glyphs.
 
 Fixed rem scale, ratio ~1.2:
 
 | Step | Size / line-height | Use |
 |---|---|---|
-| `display` | 2.75rem / 1.05, weight 600, tracking -0.03em | Wordmark only |
+| `display` | clamp(2.75rem, 7vw, 4.25rem) / 1, Fraunces 700, tracking -0.025em | Wordmark |
+| `heading` | 2rem / 1, Fraunces 700, tracking -0.02em | Section headings |
 | `title` | 1.375rem / 1.2, weight 600 | Section headings |
 | `body` | 0.9375rem / 1.5, weight 400 | Default |
 | `label` | 0.8125rem / 1.4, weight 500 | Field labels, controls |
@@ -50,6 +55,10 @@ Spacing is deliberately uneven for rhythm: tight within a control group (0.5rem)
 
 The dashed cut-guide line is the recurring motif, borrowed from the PDF: it separates page sections and outlines the sheet diagram, so the app visually quotes its own output.
 
+## Logo
+
+Two cards caught mid-shuffle, in `src/components/logo.tsx` and mirrored as a favicon in `public/icon.svg`. Keep the two in step if the shapes change. The cards spread apart on hover, which is the one place the logo is allowed to move. The mark is the only rounded-square, saturated-lime element in the product, so it stays distinct from the UI's controls.
+
 ## Components
 
 - **Buttons.** Primary is lime with ink text, radius 0.625rem. Secondary is a 1px `--rule` outline on card. Every button carries default, hover, focus-visible, active, disabled, and loading states.
@@ -61,7 +70,7 @@ The dashed cut-guide line is the recurring motif, borrowed from the PDF: it sepa
 
 ## Motion
 
-150–250ms, `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quart). Transform and opacity only.
+150 to 250ms, `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quart). Transform and opacity only.
 
 Motion is reserved for revealing state: the segmented pill, the card flip, the sheet diagram redrawing when the layout changes. No page-load choreography. All of it collapses to instant under `prefers-reduced-motion: reduce`.
 
@@ -72,4 +81,4 @@ The printed artifact follows the same system, adapted for ink economy. Ink-light
 - Fronts set in bold at a larger optical size; backs regular and slightly smaller. The weight difference alone tells you which side you are holding.
 - Text auto-fits and centers optically within the card.
 - Cut guides are hairline dashed rules in a light grey, extending to the sheet edge.
-- Each card carries a small muted index number on both sides, positioned so it lands in the same corner after cutting. It lets the user verify duplex alignment at a glance and re-pair cards that get shuffled while cutting. This is the one piece of non-content ink on the page and it earns its place.
+- No index numbers, page furniture, or deck name on the cards. Nothing prints that is not content.

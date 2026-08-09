@@ -2,7 +2,7 @@
  * Font subsetting via harfbuzz (compiled to WebAssembly).
  *
  * pdf-lib can subset fonts itself, but its bundled fontkit build silently
- * drops glyphs from large CJK faces — kana and Hangul come out blank. So we
+ * drops glyphs from large CJK faces: kana and Hangul come out blank. So we
  * subset with harfbuzz first and hand pdf-lib a small, already-minimal font to
  * embed whole (`subset: false`), which keeps output PDFs at tens of kilobytes
  * instead of megabytes.
@@ -65,7 +65,7 @@ function loadHarfbuzz(): Promise<HarfbuzzExports> {
 /**
  * Reduces `font` to only the glyphs needed for `text`.
  *
- * Returns the original bytes if subsetting fails for any reason — a larger
+ * Returns the original bytes if subsetting fails for any reason, since a larger
  * PDF is a far better outcome than no PDF.
  */
 export async function subsetFont(font: Uint8Array, text: string): Promise<Uint8Array> {

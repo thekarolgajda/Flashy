@@ -2,7 +2,7 @@
  * Unicode font loading.
  *
  * The built-in PDF fonts are WinAnsi-only, so real Unicode support means
- * embedding font files. CJK faces are 4–8 MB each, which is far too much to
+ * embedding font files. CJK faces are 4 to 8 MB each, which is far too much to
  * ship to every visitor, so fonts are split into script packs and fetched
  * lazily: a Latin-only deck never downloads a CJK font.
  *
@@ -100,7 +100,7 @@ const SCRIPT_TESTS: { pack: FontPackId; test: RegExp }[] = [
 ];
 
 /**
- * Which packs a deck needs. `latin` is always included — it is the default
+ * Which packs a deck needs. `latin` is always included, being the default
  * face and the smallest, and CJK packs still fall back to it for Latin text
  * in mixed decks only when they lack coverage.
  */

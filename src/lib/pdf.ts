@@ -1,5 +1,5 @@
 /**
- * Duplex flashcard PDF generation, entirely client-side — card text never
+ * Duplex flashcard PDF generation, entirely client-side. Card text never
  * leaves the browser.
  *
  * Sheet model: every sheet of paper produces two PDF pages, a front page and
@@ -14,17 +14,18 @@ import type { Card } from "./cards";
 import { loadPacksFor, pickPack, unrenderableCharacters, type LoadedPack } from "./fonts";
 import { subsetFont } from "./subset";
 
+/* Declaration order is the order the options appear in the UI. */
 export const PAGE_SIZES = {
-  a4: { label: "A4", width: 595.28, height: 841.89 },
   letter: { label: "US Letter", width: 612, height: 792 },
+  a4: { label: "A4", width: 595.28, height: 841.89 },
 } as const;
 
 export type PageSizeId = keyof typeof PAGE_SIZES;
 
 export const LAYOUTS = {
-  "2x2": { label: "4 per page (large)", cols: 2, rows: 2 },
-  "2x4": { label: "8 per page (medium)", cols: 2, rows: 4 },
-  "3x4": { label: "12 per page (small)", cols: 3, rows: 4 },
+  "3x4": { label: "12 per sheet (small)", cols: 3, rows: 4 },
+  "2x4": { label: "8 per sheet (medium)", cols: 2, rows: 4 },
+  "2x2": { label: "4 per sheet (large)", cols: 2, rows: 2 },
 } as const;
 
 export type LayoutId = keyof typeof LAYOUTS;
@@ -49,10 +50,6 @@ const CARD_PADDING = 14;
 const MAX_FONT_SIZE = { front: 30, back: 23 };
 const MIN_FONT_SIZE = 7;
 const LINE_HEIGHT = 1.3;
-
-/** Room reserved at the foot of a card for its index number. */
-const INDEX_SIZE = 7;
-const INDEX_INSET = 9;
 
 /**
  * Grid position of a card's back, given the position of its front.
@@ -96,64 +93,134 @@ function slotBox(
   };
 }
 
-/** Greedy word wrap, breaking over-long words character by character. */
-function wrap(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
+/**
+ * Scripts written without spaces, which may be broken between any two
+ * characters. Latin words may not.
+ */
+const BREAK_ANYWHERE =
+  /[　-〿぀-ヿ㐀-䶿一-鿿豈-﫿가-힯＀-｠]/;
+
+type Token = { text: string; spaceBefore: boolean };
+
+/**
+ * Splits a line into the smallest pieces that may not be broken apart: whole
+ * Latin words, and individual CJK characters.
+ */
+function tokenize(paragraph: string): Token[] {
+  const tokens: Token[] = [];
+  let word = "";
+  let wordSpace = false;
+  let pendingSpace = false;
+
+  const flush = () => {
+    if (word !== "") tokens.push({ text: word, spaceBefore: wordSpace });
+    word = "";
+  };
+
+  for (const char of paragraph) {
+    if (/\s/.test(char)) {
+      flush();
+      pendingSpace = true;
+      continue;
+    }
+    if (BREAK_ANYWHERE.test(char)) {
+      flush();
+      tokens.push({ text: char, spaceBefore: pendingSpace });
+      pendingSpace = false;
+      continue;
+    }
+    if (word === "") {
+      wordSpace = pendingSpace;
+      pendingSpace = false;
+    }
+    word += char;
+  }
+
+  flush();
+  return tokens;
+}
+
+/**
+ * Greedy wrap that never splits a word. When a word cannot fit the column at
+ * this size, `overflow` is set so `fitText` can try a smaller size instead of
+ * hyphenating or chopping it.
+ */
+function wrap(
+  text: string,
+  font: PDFFont,
+  size: number,
+  maxWidth: number,
+): { lines: string[]; overflow: boolean } {
   const lines: string[] = [];
+  let overflow = false;
 
   for (const paragraph of text.split("\n")) {
+    if (paragraph.trim() === "") {
+      lines.push("");
+      continue;
+    }
+
     let line = "";
 
-    const push = () => {
-      if (line !== "") lines.push(line);
-      line = "";
-    };
+    for (const token of tokenize(paragraph)) {
+      const joiner = token.spaceBefore ? " " : "";
+      const candidate = line === "" ? token.text : line + joiner + token.text;
 
-    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
-      const candidate = line === "" ? word : `${line} ${word}`;
       if (font.widthOfTextAtSize(candidate, size) <= maxWidth) {
         line = candidate;
         continue;
       }
-      push();
 
-      if (font.widthOfTextAtSize(word, size) <= maxWidth) {
-        line = word;
-        continue;
-      }
-      // Word alone overflows: split it.
-      for (const char of word) {
-        if (font.widthOfTextAtSize(line + char, size) > maxWidth && line !== "") push();
-        line += char;
-      }
+      if (line !== "") lines.push(line);
+      line = token.text;
+
+      // The token is wider than the column even on a line of its own.
+      if (font.widthOfTextAtSize(token.text, size) > maxWidth) overflow = true;
     }
 
-    push();
-    if (paragraph.trim() === "") lines.push("");
+    if (line !== "") lines.push(line);
   }
 
-  return lines;
+  return { lines, overflow };
 }
 
-/** Largest size in [MIN, MAX] whose wrapped text fits the box, and its lines. */
+/**
+ * Largest size in [MIN, max] at which the text fits the box with every word
+ * intact. Shrinking is always preferred over breaking a word.
+ */
 function fitText(
   text: string,
   font: PDFFont,
   maxWidth: number,
   maxHeight: number,
+  maxSize: number,
 ): { size: number; lines: string[] } {
-  for (let size = MAX_FONT_SIZE; size > MIN_FONT_SIZE; size -= 1) {
-    const lines = wrap(text, font, size, maxWidth);
-    if (lines.length * size * LINE_HEIGHT <= maxHeight) return { size, lines };
+  for (let size = maxSize; size >= MIN_FONT_SIZE; size -= 1) {
+    const { lines, overflow } = wrap(text, font, size, maxWidth);
+    if (!overflow && lines.length * size * LINE_HEIGHT <= maxHeight) {
+      return { size, lines };
+    }
   }
-  return { size: MIN_FONT_SIZE, lines: wrap(text, font, MIN_FONT_SIZE, maxWidth) };
+
+  // Nothing fits: a single word longer than the column even at the floor size.
+  return { size: MIN_FONT_SIZE, lines: wrap(text, font, MIN_FONT_SIZE, maxWidth).lines };
 }
 
-function drawCardText(page: PDFPage, box: Box, text: string, font: PDFFont) {
+const INK = rgb(0.14, 0.135, 0.12);
+const GUIDE_INK = rgb(0.82, 0.81, 0.78);
+
+function drawCardText(
+  page: PDFPage,
+  box: Box,
+  text: string,
+  font: PDFFont,
+  maxSize: number,
+) {
   if (text === "") return;
 
   const maxWidth = box.width - CARD_PADDING * 2;
   const maxHeight = box.height - CARD_PADDING * 2;
-  const { size, lines } = fitText(text, font, maxWidth, maxHeight);
+  const { size, lines } = fitText(text, font, maxWidth, maxHeight, maxSize);
 
   const blockHeight = lines.length * size * LINE_HEIGHT;
   // Center the block vertically, then step down line by line.
@@ -166,24 +233,28 @@ function drawCardText(page: PDFPage, box: Box, text: string, font: PDFFont) {
       y: baseline + (size * (LINE_HEIGHT - 1)) / 2,
       size,
       font,
-      color: rgb(0.06, 0.06, 0.09),
+      color: INK,
     });
     baseline -= size * LINE_HEIGHT;
   }
 }
 
+/**
+ * Hairline dashed grid. Lines run the full width and height of the sheet so a
+ * guillotine or trimmer can follow them right off the edge of the paper.
+ */
 function drawCutGuides(page: PDFPage, cols: number, rows: number, w: number, h: number) {
-  const guide = { thickness: 0.5, color: rgb(0.75, 0.75, 0.78), dashArray: [3, 3] };
+  const guide = { thickness: 0.4, color: GUIDE_INK, dashArray: [2, 4] };
   const cellWidth = (w - MARGIN * 2) / cols;
   const cellHeight = (h - MARGIN * 2) / rows;
 
   for (let col = 0; col <= cols; col += 1) {
     const x = MARGIN + col * cellWidth;
-    page.drawLine({ start: { x, y: MARGIN }, end: { x, y: h - MARGIN }, ...guide });
+    page.drawLine({ start: { x, y: 0 }, end: { x, y: h }, ...guide });
   }
   for (let row = 0; row <= rows; row += 1) {
     const y = MARGIN + row * cellHeight;
-    page.drawLine({ start: { x: MARGIN, y }, end: { x: w - MARGIN, y }, ...guide });
+    page.drawLine({ start: { x: 0, y }, end: { x: w, y }, ...guide });
   }
 }
 
@@ -237,6 +308,7 @@ async function embedFaces(
     record(card.front, true);
     record(card.back, false);
   }
+
 
   const entries = await Promise.all(
     [...usage].map(async ([key, { source, text }]) => {
@@ -294,22 +366,33 @@ export async function generateFlashcardPdf(
     }
 
     for (const [slot, card] of sheet.entries()) {
+      const frontBox = slotBox(slot, cols, rows, width, height);
+      const backBox = slotBox(
+        mirrorSlot(slot, cols, rows, options.flipEdge),
+        cols,
+        rows,
+        width,
+        height,
+      );
+
       const frontFont = fontFor(card.front, true);
       drawCardText(
         frontPage,
-        slotBox(slot, cols, rows, width, height),
+        frontBox,
         sanitize(card.front, frontFont),
         frontFont,
+        MAX_FONT_SIZE.front,
       );
 
       const backFont = fontFor(card.back, false);
-      const backSlot = mirrorSlot(slot, cols, rows, options.flipEdge);
       drawCardText(
         backPage,
-        slotBox(backSlot, cols, rows, width, height),
+        backBox,
         sanitize(card.back, backFont),
         backFont,
+        MAX_FONT_SIZE.back,
       );
+
     }
   }
 

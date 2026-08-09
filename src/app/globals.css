@@ -1,38 +1,145 @@
 @import "tailwindcss";
 
+/*
+ * Light only, on purpose. The product's output is a printed sheet, so the app
+ * ground echoes paper and screen stays continuous with print. See DESIGN.md.
+ * Every neutral is tinted toward the citrus hue; nothing is cold grey.
+ */
 :root {
-  --background: #f6f6f4;
-  --surface: #ffffff;
-  --foreground: #16161a;
-  --muted: #6a6a73;
-  --border: #e2e2dd;
-  --accent: #1f6feb;
+  --paper: oklch(0.985 0.009 96);
+  /* Aged-paper tone, used for the card sitting behind in the logo. */
+  --paper-warm: oklch(0.9 0.032 92);
+  --card: oklch(0.997 0.004 96);
+  --ink: oklch(0.25 0.018 96);
+  --ink-soft: oklch(0.52 0.02 96);
+  --rule: oklch(0.9 0.014 96);
+  --lime: oklch(0.81 0.105 132);
+  --lime-deep: oklch(0.52 0.098 136);
+  --tangerine: oklch(0.7 0.125 55);
+  /* Tangerine is too light to carry body text on paper, so warnings use this. */
+  --tangerine-deep: oklch(0.5 0.115 52);
+  --berry: oklch(0.52 0.19 22);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --color-accent: var(--accent);
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-lime: var(--lime);
+  --color-lime-deep: var(--lime-deep);
+  --color-tangerine: var(--tangerine);
+  --color-tangerine-deep: var(--tangerine-deep);
+  --color-berry: var(--berry);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0e0e10;
-    --surface: #17171a;
-    --foreground: #ededed;
-    --muted: #9a9aa3;
-    --border: #2a2a30;
-    --accent: #4b8dfb;
-  }
+/* Fraunces carries the wordmark and section headings. Its WONK axis is what
+   keeps the headings from reading as another neutral geometric sans. */
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 48;
+}
+
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* One focus treatment, so every control agrees. */
+:where(button, a, input, select, textarea, label, [tabindex]):focus-visible {
+  outline: 2px solid var(--lime-deep);
+  outline-offset: 2px;
+}
+
+/* The cut-guide motif, quoted from the PDF. */
+.rule-dashed {
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--rule) 0 4px,
+    transparent 4px 10px
+  );
+}
+
+/*
+ * Preview cards sit at slight angles, like a stack someone just cut apart.
+ * Hovering squares one up and lifts it off the desk.
+ */
+.card-scatter {
+  transform: rotate(var(--tilt, 0deg));
+  transition:
+    transform 300ms var(--ease-out-quart),
+    box-shadow 300ms var(--ease-out-quart);
+}
+
+.card-scatter:hover,
+.card-scatter:focus-visible {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 14px 28px -14px oklch(0.25 0.018 96 / 0.32);
+}
+
+/* The logo's two cards spread apart when you point at the mark. */
+.logo-mark .logo-card-back,
+.logo-mark .logo-card-front {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 340ms var(--ease-out-quart);
+}
+
+.logo-mark .logo-card-back {
+  transform: rotate(-17deg) translate(-3px, -3px);
+}
+
+.logo-mark .logo-card-front {
+  transform: rotate(6deg) translate(2px, 3px);
+}
+
+.logo:hover .logo-mark .logo-card-back {
+  transform: rotate(-28deg) translate(-6px, -5px);
+}
+
+.logo:hover .logo-mark .logo-card-front {
+  transform: rotate(14deg) translate(4px, 5px);
+}
+
+/* Card preview flip. The back is the payoff, so it turns on hover and focus. */
+.flip {
+  perspective: 900px;
+}
+
+.flip-inner {
+  transform-style: preserve-3d;
+  transition: transform 320ms var(--ease-out-quart);
+}
+
+.flip:hover .flip-inner,
+.flip:focus-visible .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  backface-visibility: hidden;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
