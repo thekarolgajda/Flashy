@@ -93,7 +93,7 @@ A card front that names a category prints that category's mark beneath it. The m
 |---|---|---|
 | Easy | Smiling face | The question, and the face you make answering it |
 | Hard | Peak with a snowcap | Something to climb |
-| Serious or Cringey | Disc, half light and half dark | One category, two moods, decided when it is read out |
+| Serious or Cringey | Comedy and tragedy masks | One category, two moods, decided when it is read out. Set side by side, never overlapping: at 12mm any overlap makes the pair read as one blob |
 | Ask Others | Speech bubble with an ellipsis | Someone else does the talking |
 | anything else | The Flashy card-stack | Ordinary decks still get a front marker |
 

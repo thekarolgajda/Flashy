@@ -43,13 +43,18 @@ const CATEGORIES: Category[] = [
   {
     /*
      * One category, two possible moods, decided when the question is read out.
-     * A disc half light and half dark says either/or without committing to a
-     * face for each.
+     * Comedy and tragedy: the two faces a question can turn out to be.
+     *
+     * They are set side by side rather than overlapped, and each mouth sits
+     * inside its own mask, because at 12mm any overlap makes the pair read as
+     * one indistinct blob.
      */
     id: "mixed",
     matches: /^(serious|cringey|cringy|serious or cringey|serious\/cringey)$/,
-    stroke: "M2 12 A10 10 0 1 0 22 12 A10 10 0 1 0 2 12 Z M12 2 L12 22",
-    fill: "M12 2 A10 10 0 0 1 12 22 Z",
+    stroke:
+      "M1.5 4 A2 2 0 0 1 3.5 2 L9.5 2 A2 2 0 0 1 11.5 4 L11.5 8 A5 5 0 0 1 1.5 8 Z M4.2 9.2 Q6.5 11.4 8.8 9.2 M12.5 11 A2 2 0 0 1 14.5 9 L20.5 9 A2 2 0 0 1 22.5 11 L22.5 15 A5 5 0 0 1 12.5 15 Z M15.2 17.4 Q17.5 15.2 19.8 17.4",
+    fill:
+      "M3.35 5.8 A0.95 0.95 0 1 0 5.25 5.8 A0.95 0.95 0 1 0 3.35 5.8 Z M7.75 5.8 A0.95 0.95 0 1 0 9.65 5.8 A0.95 0.95 0 1 0 7.75 5.8 Z M14.35 12.8 A0.95 0.95 0 1 0 16.25 12.8 A0.95 0.95 0 1 0 14.35 12.8 Z M18.75 12.8 A0.95 0.95 0 1 0 20.65 12.8 A0.95 0.95 0 1 0 18.75 12.8 Z",
   },
   {
     // Someone else does the talking: a bubble with another voice inside it.
