@@ -26,7 +26,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Flashy: printable flashcard PDFs",
   description:
-    "Turn a list of terms or a CSV into a double-sided, printable flashcard PDF. Everything runs in your browser.",
+    "Turn a list of cards or a CSV into a double-sided, printable flashcard PDF. Everything runs in your browser.",
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },

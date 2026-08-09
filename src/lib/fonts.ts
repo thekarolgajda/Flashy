@@ -20,6 +20,12 @@ type PackDefinition = {
   /** Regular and bold URLs; packs without a bold face reuse the regular. */
   regular: string;
   bold?: string;
+  /**
+   * Optional display face for card fronts. This is the brand's typeface, so
+   * the printed card is set in the same voice as the app that made it. Only
+   * the Latin pack has one; other scripts fall back to their bold weight.
+   */
+  display?: string;
 };
 
 const PACKS: Record<FontPackId, PackDefinition> = {
@@ -27,6 +33,7 @@ const PACKS: Record<FontPackId, PackDefinition> = {
     label: "Noto Sans",
     regular: "/fonts/NotoSans-Regular.ttf",
     bold: "/fonts/NotoSans-Bold.ttf",
+    display: "/fonts/Fraunces-Front.ttf",
   },
   // CJK faces must be TrueType, not the smaller CFF-flavoured OTFs: fontkit
   // subsets CFF glyphs incorrectly and every character renders as tofu.
@@ -39,8 +46,12 @@ export type LoadedPack = {
   id: FontPackId;
   regular: Uint8Array;
   bold: Uint8Array;
+  /** Display face for fronts, or null when this script has none. */
+  display: Uint8Array | null;
   /** True when the pack has a glyph for every code point in the string. */
   covers(text: string): boolean;
+  /** True when the display face can set the string. */
+  displayCovers(text: string): boolean;
 };
 
 type FontkitFont = { hasGlyphForCodePoint(codePoint: number): boolean };
@@ -59,29 +70,38 @@ function loadPack(id: FontPackId): Promise<LoadedPack> {
 
   const definition = PACKS[id];
   const pending = (async (): Promise<LoadedPack> => {
-    const [regular, bold] = await Promise.all([
+    const [regular, bold, display] = await Promise.all([
       fetchFont(definition.regular),
       definition.bold ? fetchFont(definition.bold) : Promise.resolve(null),
+      definition.display ? fetchFont(definition.display) : Promise.resolve(null),
     ]);
 
     // fontkit mutates the buffer it parses, so hand it a copy and keep the
     // pristine bytes for pdf-lib to embed.
     const probe = fontkit.create(regular.slice()) as unknown as FontkitFont;
+    const displayProbe = display
+      ? (fontkit.create(display.slice()) as unknown as FontkitFont)
+      : null;
+
+    const coveredBy = (font: FontkitFont, text: string) => {
+      for (const char of text) {
+        const codePoint = char.codePointAt(0);
+        if (codePoint === undefined) continue;
+        // Line breaks are handled by the layout code, never drawn.
+        if (char === "\n") continue;
+        if (!font.hasGlyphForCodePoint(codePoint)) return false;
+      }
+      return true;
+    };
 
     return {
       id,
       regular,
       bold: bold ?? regular,
-      covers(text: string) {
-        for (const char of text) {
-          const codePoint = char.codePointAt(0);
-          if (codePoint === undefined) continue;
-          // Line breaks are handled by the layout code, never drawn.
-          if (char === "\n") continue;
-          if (!probe.hasGlyphForCodePoint(codePoint)) return false;
-        }
-        return true;
-      },
+      display,
+      covers: (text: string) => coveredBy(probe, text),
+      displayCovers: (text: string) =>
+        displayProbe !== null && coveredBy(displayProbe, text),
     };
   })();
 

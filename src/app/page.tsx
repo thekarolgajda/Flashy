@@ -5,6 +5,7 @@ import { parseCards, SAMPLE_INPUT, type Card, type ParseResult } from "@/lib/car
 import { parseCardsFromCsv } from "@/lib/csv";
 import { requiredPacks } from "@/lib/fonts";
 import { Logo } from "@/components/logo";
+import { CategoryMark } from "@/components/category-mark";
 import {
   findUnsupportedCharacters,
   generateFlashcardPdf,
@@ -154,10 +155,11 @@ function PreviewCard({
       style={{ aspectRatio: ratio, "--tilt": `${tilt}deg` } as React.CSSProperties}
     >
       <div className="flip-inner relative h-full w-full">
-        <div className="flip-face absolute inset-0 flex items-center justify-center rounded-xl bg-card px-4 text-center ring-1 ring-rule">
-          <span className="text-[0.9375rem] font-semibold text-balance whitespace-pre-wrap">
+        <div className="flip-face absolute inset-0 flex flex-col items-center justify-center gap-2.5 rounded-xl bg-card px-4 text-center ring-1 ring-rule">
+          <span className="font-display text-[1.0625rem] leading-tight font-bold text-balance whitespace-pre-wrap">
             {card.front}
           </span>
+          <CategoryMark front={card.front} className="size-6 text-ink-soft/70" />
         </div>
         <div className="flip-back flip-face absolute inset-0 flex items-center justify-center rounded-xl bg-card px-4 text-center ring-1 ring-tangerine/70">
           <span className="text-[0.875rem] text-balance whitespace-pre-wrap text-ink-soft">
@@ -294,8 +296,8 @@ export default function Home() {
           <Logo />
         </h1>
         <p className="mt-5 max-w-[58ch] text-[1.125rem] leading-[1.55] text-ink-soft">
-          Paste your terms or drop in a CSV. Out comes a double-sided PDF, laid
-          out so every back lands on the right front when you print it.
+          Write your cards, or upload a CSV. Out comes a double-sided PDF,
+          laid out so every back lands on the right front when you print it.
         </p>
         <p className="mt-2.5 text-[0.8125rem] text-ink-soft">
           Built in your browser. Nothing you type is uploaded anywhere.

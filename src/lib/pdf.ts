@@ -13,6 +13,7 @@ import fontkit from "@pdf-lib/fontkit";
 import type { Card } from "./cards";
 import { loadPacksFor, pickPack, unrenderableCharacters, type LoadedPack } from "./fonts";
 import { subsetFont } from "./subset";
+import { categoryFor } from "./categories";
 
 /* Declaration order is the order the options appear in the UI. */
 export const PAGE_SIZES = {
@@ -207,7 +208,9 @@ function fitText(
 }
 
 const INK = rgb(0.14, 0.135, 0.12);
-const GUIDE_INK = rgb(0.82, 0.81, 0.78);
+const GUIDE_INK = rgb(0.84, 0.83, 0.8);
+const TRIM_INK = rgb(0.66, 0.65, 0.62);
+const ORNAMENT_INK = rgb(0.55, 0.54, 0.51);
 
 function drawCardText(
   page: PDFPage,
@@ -215,16 +218,22 @@ function drawCardText(
   text: string,
   font: PDFFont,
   maxSize: number,
+  reserveOrnament = false,
 ) {
   if (text === "") return;
 
   const maxWidth = box.width - CARD_PADDING * 2;
-  const maxHeight = box.height - CARD_PADDING * 2;
+  const maxHeight =
+    box.height - CARD_PADDING * 2 - (reserveOrnament ? ORNAMENT_BAND : 0);
   const { size, lines } = fitText(text, font, maxWidth, maxHeight, maxSize);
 
   const blockHeight = lines.length * size * LINE_HEIGHT;
-  // Center the block vertically, then step down line by line.
-  let baseline = box.y + box.height / 2 + blockHeight / 2 - size * LINE_HEIGHT;
+  // Optical centring: a block centred on the true middle reads as sitting low,
+  // so lift it by a small fraction of the card height.
+  const opticalLift =
+    box.height * 0.022 + (reserveOrnament ? ORNAMENT_BAND / 2 : 0);
+  let baseline =
+    box.y + box.height / 2 + blockHeight / 2 - size * LINE_HEIGHT + opticalLift;
 
   for (const line of lines) {
     const width = font.widthOfTextAtSize(line, size);
@@ -239,23 +248,124 @@ function drawCardText(
   }
 }
 
+/** Height reserved under a front's text for its ornament. */
+const ORNAMENT_BAND = 54;
+
 /**
- * Hairline dashed grid. Lines run the full width and height of the sheet so a
- * guillotine or trimmer can follow them right off the edge of the paper.
+ * The ornament under a card front: the mark for its category, flanked by
+ * hairlines so it reads as a deliberate device rather than a stray icon.
+ *
+ * It earns its ink twice over. It says which side you are holding and which
+ * type of card it is, without a word of extra furniture, and it is line art so
+ * it costs almost nothing on a mono laser printer.
+ */
+function drawFrontOrnament(page: PDFPage, box: Box, frontText: string) {
+  const category = categoryFor(frontText);
+  const centerX = box.x + box.width / 2;
+  const y = box.y + CARD_PADDING + 20;
+
+  // Marks are authored in a 24x24 box; this scales them to the printed size.
+  const size = Math.min(36, box.height * 0.2);
+  const scale = size / 24;
+
+  if (category.fill) {
+    page.drawSvgPath(category.fill, {
+      x: centerX - size / 2,
+      y: y + size / 2,
+      scale,
+      color: ORNAMENT_INK,
+      borderWidth: 0,
+    });
+  }
+
+  page.drawSvgPath(category.stroke, {
+    x: centerX - size / 2,
+    y: y + size / 2,
+    scale,
+    borderColor: ORNAMENT_INK,
+    borderWidth: 0.9,
+  });
+}
+
+/**
+ * Cut guides in the printer's idiom: solid trim marks in the margin, where the
+ * blade actually starts, and a hairline dashed line across the card area so
+ * the cut can be followed without a heavy rule printing between every card.
  */
 function drawCutGuides(page: PDFPage, cols: number, rows: number, w: number, h: number) {
-  const guide = { thickness: 0.4, color: GUIDE_INK, dashArray: [2, 4] };
+  const hairline = { thickness: 0.3, color: GUIDE_INK, dashArray: [1.5, 4] };
+  const mark = { thickness: 0.5, color: TRIM_INK };
   const cellWidth = (w - MARGIN * 2) / cols;
   const cellHeight = (h - MARGIN * 2) / rows;
+  const tick = 11;
+  const gap = 5;
 
   for (let col = 0; col <= cols; col += 1) {
     const x = MARGIN + col * cellWidth;
-    page.drawLine({ start: { x, y: 0 }, end: { x, y: h }, ...guide });
+    page.drawLine({
+      start: { x, y: MARGIN + gap },
+      end: { x, y: h - MARGIN - gap },
+      ...hairline,
+    });
+    // Trim marks sit clear of the card area, in the part that gets cut away.
+    page.drawLine({ start: { x, y: MARGIN - gap }, end: { x, y: MARGIN - gap - tick }, ...mark });
+    page.drawLine({
+      start: { x, y: h - MARGIN + gap },
+      end: { x, y: h - MARGIN + gap + tick },
+      ...mark,
+    });
   }
+
   for (let row = 0; row <= rows; row += 1) {
     const y = MARGIN + row * cellHeight;
-    page.drawLine({ start: { x: 0, y }, end: { x: w, y }, ...guide });
+    page.drawLine({
+      start: { x: MARGIN + gap, y },
+      end: { x: w - MARGIN - gap, y },
+      ...hairline,
+    });
+    page.drawLine({ start: { x: MARGIN - gap, y }, end: { x: MARGIN - gap - tick, y }, ...mark });
+    page.drawLine({
+      start: { x: w - MARGIN + gap, y },
+      end: { x: w - MARGIN + gap + tick, y },
+      ...mark,
+    });
   }
+}
+
+/** Characters the sheet label may need, so its face is always embedded. */
+export const SHEET_LABEL_CHARS =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ·/";
+
+/**
+ * Identification for the printout: deck name, which side, which sheet.
+ *
+ * It sits in the margin, outside the trim marks, so it is cut away with the
+ * waste and never appears on a finished card. That is what lets the sheet be
+ * useful to handle while costing the cards nothing.
+ */
+function drawSheetLabel(
+  page: PDFPage,
+  w: number,
+  h: number,
+  font: PDFFont,
+  meta: { deck?: string; side: string; sheetNumber: number; sheets: number },
+) {
+  const deck = (meta.deck ?? "").trim();
+  const parts = [deck || "Flashy", meta.side];
+  if (meta.sheets > 1) parts.push(`Sheet ${meta.sheetNumber} of ${meta.sheets}`);
+
+  const size = 7.5;
+  // Deck names are user text, so drop anything this face cannot draw.
+  const label = sanitize(parts.join("  ·  "), font);
+  const width = font.widthOfTextAtSize(label, size);
+
+  page.drawText(label, {
+    x: (w - width) / 2,
+    y: MARGIN - 15 - size,
+    size,
+    font,
+    color: TRIM_INK,
+  });
 }
 
 /** All text a deck will render, used for font selection and coverage checks. */
@@ -273,9 +383,28 @@ export async function findUnsupportedCharacters(cards: Card[]): Promise<string[]
   return unrenderableCharacters(texts, await loadPacksFor(texts));
 }
 
+type Weight = "display" | "bold" | "regular";
+
+/**
+ * Which face a string is set in.
+ *
+ * Fronts want the brand's display face, so the printed card reads in the same
+ * voice as the app. Fraunces only covers Latin, so anything else falls back to
+ * the script pack's bold weight, and backs are always the regular sans.
+ */
+function weightFor(text: string, isFront: boolean, pack: LoadedPack): Weight {
+  if (!isFront) return "regular";
+  return pack.displayCovers(text) ? "display" : "bold";
+}
+
 /** Identifies one embedded face: a script pack at a given weight. */
-function faceKey(pack: LoadedPack, bold: boolean): string {
-  return `${pack.id}:${bold ? "bold" : "regular"}`;
+function faceKey(pack: LoadedPack, weight: Weight): string {
+  return `${pack.id}:${weight}`;
+}
+
+function faceBytes(pack: LoadedPack, weight: Weight): Uint8Array {
+  if (weight === "display" && pack.display) return pack.display;
+  return weight === "regular" ? pack.regular : pack.bold;
 }
 
 /**
@@ -295,19 +424,23 @@ async function embedFaces(
   const chosen = (text: string) => pickPack(text, packs) ?? packs[0];
 
   const usage = new Map<string, { source: Uint8Array; text: string }>();
-  const record = (text: string, bold: boolean) => {
+  const record = (text: string, isFront: boolean) => {
     const pack = chosen(text);
-    const key = faceKey(pack, bold);
+    const weight = weightFor(text, isFront, pack);
+    const key = faceKey(pack, weight);
     const existing = usage.get(key);
 
     if (existing) existing.text += text;
-    else usage.set(key, { source: bold ? pack.bold : pack.regular, text });
+    else usage.set(key, { source: faceBytes(pack, weight), text });
   };
 
   for (const card of cards) {
     record(card.front, true);
     record(card.back, false);
   }
+
+  // Sheet furniture in the trimmed margin is always set in the regular sans.
+  record(SHEET_LABEL_CHARS, false);
 
 
   const entries = await Promise.all(
@@ -351,11 +484,16 @@ export async function generateFlashcardPdf(
   doc.setCreator("Flashy");
 
   const faces = await embedFaces(doc, cards, packs);
-  const fontFor = (text: string, bold: boolean) =>
-    faces.get(faceKey(pickPack(text, packs) ?? packs[0], bold))!;
+  const fontFor = (text: string, isFront: boolean) => {
+    const pack = pickPack(text, packs) ?? packs[0];
+    return faces.get(faceKey(pack, weightFor(text, isFront, pack)))!;
+  };
+  const labelFont = fontFor(SHEET_LABEL_CHARS, false);
+  const sheets = Math.ceil(cards.length / perSheet) || 1;
 
   for (let start = 0; start < cards.length; start += perSheet) {
     const sheet = cards.slice(start, start + perSheet);
+    const sheetNumber = start / perSheet + 1;
 
     const frontPage = doc.addPage([width, height]);
     const backPage = doc.addPage([width, height]);
@@ -364,6 +502,19 @@ export async function generateFlashcardPdf(
       drawCutGuides(frontPage, cols, rows, width, height);
       drawCutGuides(backPage, cols, rows, width, height);
     }
+
+    drawSheetLabel(frontPage, width, height, labelFont, {
+      deck: options.title,
+      side: "Fronts",
+      sheetNumber,
+      sheets,
+    });
+    drawSheetLabel(backPage, width, height, labelFont, {
+      deck: options.title,
+      side: "Backs",
+      sheetNumber,
+      sheets,
+    });
 
     for (const [slot, card] of sheet.entries()) {
       const frontBox = slotBox(slot, cols, rows, width, height);
@@ -382,7 +533,9 @@ export async function generateFlashcardPdf(
         sanitize(card.front, frontFont),
         frontFont,
         MAX_FONT_SIZE.front,
+        true,
       );
+      drawFrontOrnament(frontPage, frontBox, card.front);
 
       const backFont = fontFor(card.back, false);
       drawCardText(

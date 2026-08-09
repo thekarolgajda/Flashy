@@ -64,6 +64,12 @@ Two traps if you touch this:
 - CJK fonts must be **TrueType**, not the smaller CFF-flavoured OTFs. fontkit mis-parses subsetted CFF and every glyph renders as tofu.
 - fontkit mutates the buffer it parses, so `fonts.ts` probes coverage on a copy and keeps pristine bytes for embedding.
 
+### Categories
+
+`src/lib/categories.ts` maps a card's front text to an ornament. This is how a deck of game cards works with no extra setting: a CSV whose first column reads `Easy` or `Ask Others` is simply recognised, and anything unrecognised gets the default Flashy mark. Marks are SVG path strings in a 24x24 box, consumed by `drawFrontOrnament()` in the PDF and by `CategoryMark` on screen, so the two can never disagree.
+
+Fronts reserve `ORNAMENT_BAND` of vertical space and lift their text by half of it, which is what keeps a long front from colliding with its mark.
+
 ## Conventions
 
 - Page sizes, grid layouts, and other option sets are **`as const` object maps keyed by id**, with their ids derived as types (`PageSizeId`, `LayoutId`). The UI renders selects by iterating `Object.entries`, so adding an option means editing only the map in `src/lib/pdf.ts`.
