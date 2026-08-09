@@ -21,11 +21,13 @@ type PackDefinition = {
   regular: string;
   bold?: string;
   /**
-   * Optional display face for card fronts. This is the brand's typeface, so
-   * the printed card is set in the same voice as the app that made it. Only
-   * the Latin pack has one; other scripts fall back to their bold weight.
+   * The brand's typeface, so the printed card is set in the same voice as the
+   * app that made it: `display` for fronts, `text` for backs, both Fraunces so
+   * the two sides of a card match. Only the Latin pack has these; other
+   * scripts fall back to their bold and regular weights.
    */
   display?: string;
+  text?: string;
 };
 
 const PACKS: Record<FontPackId, PackDefinition> = {
@@ -34,6 +36,7 @@ const PACKS: Record<FontPackId, PackDefinition> = {
     regular: "/fonts/NotoSans-Regular.ttf",
     bold: "/fonts/NotoSans-Bold.ttf",
     display: "/fonts/Fraunces-Front.ttf",
+    text: "/fonts/Fraunces-Back.ttf",
   },
   // CJK faces must be TrueType, not the smaller CFF-flavoured OTFs: fontkit
   // subsets CFF glyphs incorrectly and every character renders as tofu.
@@ -48,10 +51,14 @@ export type LoadedPack = {
   bold: Uint8Array;
   /** Display face for fronts, or null when this script has none. */
   display: Uint8Array | null;
+  /** Text face for backs, or null when this script has none. */
+  text: Uint8Array | null;
   /** True when the pack has a glyph for every code point in the string. */
   covers(text: string): boolean;
   /** True when the display face can set the string. */
   displayCovers(text: string): boolean;
+  /** True when the text face can set the string. */
+  textCovers(text: string): boolean;
 };
 
 type FontkitFont = { hasGlyphForCodePoint(codePoint: number): boolean };
@@ -70,10 +77,11 @@ function loadPack(id: FontPackId): Promise<LoadedPack> {
 
   const definition = PACKS[id];
   const pending = (async (): Promise<LoadedPack> => {
-    const [regular, bold, display] = await Promise.all([
+    const [regular, bold, display, text] = await Promise.all([
       fetchFont(definition.regular),
       definition.bold ? fetchFont(definition.bold) : Promise.resolve(null),
       definition.display ? fetchFont(definition.display) : Promise.resolve(null),
+      definition.text ? fetchFont(definition.text) : Promise.resolve(null),
     ]);
 
     // fontkit mutates the buffer it parses, so hand it a copy and keep the
@@ -81,6 +89,9 @@ function loadPack(id: FontPackId): Promise<LoadedPack> {
     const probe = fontkit.create(regular.slice()) as unknown as FontkitFont;
     const displayProbe = display
       ? (fontkit.create(display.slice()) as unknown as FontkitFont)
+      : null;
+    const textProbe = text
+      ? (fontkit.create(text.slice()) as unknown as FontkitFont)
       : null;
 
     const coveredBy = (font: FontkitFont, text: string) => {
@@ -99,9 +110,12 @@ function loadPack(id: FontPackId): Promise<LoadedPack> {
       regular,
       bold: bold ?? regular,
       display,
-      covers: (text: string) => coveredBy(probe, text),
-      displayCovers: (text: string) =>
-        displayProbe !== null && coveredBy(displayProbe, text),
+      text,
+      covers: (value: string) => coveredBy(probe, value),
+      displayCovers: (value: string) =>
+        displayProbe !== null && coveredBy(displayProbe, value),
+      textCovers: (value: string) =>
+        textProbe !== null && coveredBy(textProbe, value),
     };
   })();
 

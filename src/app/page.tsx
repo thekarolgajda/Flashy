@@ -162,7 +162,7 @@ function PreviewCard({
           </span>
         </div>
         <div className="flip-back flip-face absolute inset-0 flex items-center justify-center rounded-xl bg-card px-4 text-center ring-1 ring-tangerine/70">
-          <span className="text-[0.875rem] text-balance whitespace-pre-wrap text-ink-soft">
+          <span className="font-display text-[0.9375rem] leading-snug text-balance whitespace-pre-wrap text-ink-soft">
             {card.back}
           </span>
         </div>

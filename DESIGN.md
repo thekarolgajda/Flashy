@@ -78,7 +78,9 @@ Motion is reserved for revealing state: the segmented pill, the card flip, the s
 
 The printed artifact follows the same system, adapted for ink economy. It is designed for a mono laser printer: no background fills, no colour carrying meaning, nothing that fails in black and white.
 
-- **Fronts are set in Fraunces**, the same display face as the wordmark, so the card reads in the voice of the app that made it. Backs are Noto Sans, lighter and a size smaller. The weight difference alone tells you which side you are holding. Scripts Fraunces does not cover fall back to their pack's bold weight.
+- **Both sides are set in Fraunces**, the same face as the wordmark, so a card reads as one object rather than two halves: the display cut on the front, a lighter cut a size smaller on the back. The weight difference alone tells you which side you are holding. Scripts Fraunces does not cover (CJK, Cyrillic, Greek) fall back to their pack's bold and regular weights.
+
+  Both Fraunces cuts are instanced at `opsz=44`. The optical-size axis at its default (14) produces broken advance widths through pdf-lib, showing as gaps inside words; pin `opsz` when adding any further cut.
 - **Text is optically centred**, lifted slightly above the true middle, which otherwise reads as sitting low.
 - **Words are never broken.** The type shrinks until every word fits whole. Only scripts written without spaces (CJK) break between characters.
 - **Cut guides use the printer's idiom**: solid trim marks in the margin where the blade starts, and a dashed line across the card area so no heavy rule prints between cards. They are drawn dark enough to follow with scissors under ordinary light, which matters more than keeping them invisible: they sit exactly on the cut, so a clean cut removes them anyway.

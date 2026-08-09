@@ -59,7 +59,9 @@ Real Unicode support means embedding font files, and CJK faces are 4 to 17 MB, s
 
 **Subsetting does not use pdf-lib's built-in subsetter.** Its bundled fontkit silently drops glyphs from large CJK faces: kana and Hangul come out blank while neighbouring characters render fine. `src/lib/subset.ts` drives harfbuzz (`public/harfbuzz-subset.wasm`) directly, then embeds the already-minimal result with `subset: false`. This keeps output PDFs at tens of kilobytes and is why `@pdf-lib/fontkit` is still registered but never asked to subset.
 
-Two traps if you touch this:
+Three traps if you touch this:
+
+- Fraunces cuts must be instanced with **`opsz=44` pinned**. At the axis default the instance renders with gaps inside words through pdf-lib, even though its `hmtx` advances look correct when inspected. Symptom: `What's the` prints as `Wh at's th e`.
 
 - CJK fonts must be **TrueType**, not the smaller CFF-flavoured OTFs. fontkit mis-parses subsetted CFF and every glyph renders as tofu.
 - fontkit mutates the buffer it parses, so `fonts.ts` probes coverage on a copy and keeps pristine bytes for embedding.

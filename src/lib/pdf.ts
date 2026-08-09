@@ -439,18 +439,19 @@ export async function findUnsupportedCharacters(cards: Card[]): Promise<string[]
   return unrenderableCharacters(texts, await loadPacksFor(texts));
 }
 
-type Weight = "display" | "bold" | "regular";
+type Weight = "display" | "text" | "bold" | "regular";
 
 /**
  * Which face a string is set in.
  *
- * Fronts want the brand's display face, so the printed card reads in the same
- * voice as the app. Fraunces only covers Latin, so anything else falls back to
- * the script pack's bold weight, and backs are always the regular sans.
+ * Both sides of a card are set in Fraunces, the brand's typeface, so a card
+ * reads as one object rather than two halves: the display cut on the front,
+ * the lighter text cut on the back. Fraunces covers Latin only, so other
+ * scripts fall back to the script pack's bold and regular weights.
  */
 function weightFor(text: string, isFront: boolean, pack: LoadedPack): Weight {
-  if (!isFront) return "regular";
-  return pack.displayCovers(text) ? "display" : "bold";
+  if (isFront) return pack.displayCovers(text) ? "display" : "bold";
+  return pack.textCovers(text) ? "text" : "regular";
 }
 
 /** Identifies one embedded face: a script pack at a given weight. */
@@ -460,6 +461,7 @@ function faceKey(pack: LoadedPack, weight: Weight): string {
 
 function faceBytes(pack: LoadedPack, weight: Weight): Uint8Array {
   if (weight === "display" && pack.display) return pack.display;
+  if (weight === "text" && pack.text) return pack.text;
   return weight === "regular" ? pack.regular : pack.bold;
 }
 
