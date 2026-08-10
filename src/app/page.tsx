@@ -185,7 +185,7 @@ export default function Home() {
 
   const [title, setTitle] = useState("");
   const [pageSize, setPageSize] = useState<PageSizeId>("letter");
-  const [layout, setLayout] = useState<LayoutId>("3x4");
+  const [layout, setLayout] = useState<LayoutId>("4x5");
   const [flipEdge, setFlipEdge] = useState<FlipEdge>("long");
   const [cutGuides, setCutGuides] = useState(true);
   const [busy, setBusy] = useState(false);

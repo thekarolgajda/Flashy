@@ -24,9 +24,10 @@ export const PAGE_SIZES = {
 export type PageSizeId = keyof typeof PAGE_SIZES;
 
 export const LAYOUTS = {
+  // 4x5 on Letter gives ~2.1x2.2in cards, the Cards Against Humanity format.
+  "4x5": { label: "20 per sheet (game)", cols: 4, rows: 5 },
   "3x4": { label: "12 per sheet (small)", cols: 3, rows: 4 },
-  "2x4": { label: "8 per sheet (medium)", cols: 2, rows: 4 },
-  "2x2": { label: "4 per sheet (large)", cols: 2, rows: 2 },
+  "2x4": { label: "8 per sheet (large)", cols: 2, rows: 4 },
 } as const;
 
 export type LayoutId = keyof typeof LAYOUTS;
