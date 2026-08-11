@@ -1,6 +1,8 @@
 # Flashy
 
-Web-based flashcard generator. Give it your cards and get back a printable,
+**[Make flashcards →](https://thekarolgajda.github.io/Flashy/)**
+
+Free web-based flashcard generator. Give it your cards and get back a printable,
 double-sided PDF laid out for duplex printing, so every back lands on the right
 front.
 

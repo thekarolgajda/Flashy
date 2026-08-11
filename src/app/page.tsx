@@ -6,6 +6,7 @@ import { parseCardsFromCsv } from "@/lib/csv";
 import { requiredPacks } from "@/lib/fonts";
 import { Logo } from "@/components/logo";
 import { CategoryMark } from "@/components/category-mark";
+import { Faq } from "@/components/faq";
 import {
   findUnsupportedCharacters,
   generateFlashcardPdf,
@@ -295,7 +296,13 @@ export default function Home() {
         <h1>
           <Logo />
         </h1>
-        <p className="mt-5 max-w-[58ch] text-[1.125rem] leading-[1.55] text-ink-soft">
+        {/* The wordmark is the h1, so this line carries what the page is
+            actually about — for a reader landing cold, and for a search
+            result, which has only the words to go on. */}
+        <p className="font-display mt-5 max-w-[24ch] text-[clamp(1.35rem,3.2vw,1.75rem)] leading-[1.25] font-semibold tracking-[-0.015em]">
+          Free printable flashcards, laid out for double-sided printing.
+        </p>
+        <p className="mt-4 max-w-[58ch] text-[1.125rem] leading-[1.55] text-ink-soft">
           Write your cards, or upload a CSV. Out comes a double-sided PDF,
           laid out so every back lands on the right front when you print it.
         </p>
@@ -589,6 +596,8 @@ export default function Home() {
           </>
         )}
       </section>
+
+      <Faq />
     </main>
   );
 }
