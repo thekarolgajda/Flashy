@@ -505,7 +505,18 @@ async function embedFaces(
   const entries = await Promise.all(
     [...usage].map(async ([key, { source, text }]) => {
       const subset = await subsetFont(source, text);
-      return [key, await doc.embedFont(subset, { subset: false })] as const;
+      // Ligatures must stay off. pdf-lib derives both the /W widths and the
+      // ToUnicode map from the glyphs reachable by code point, and a ligature
+      // glyph is reachable only through GSUB. So an `fi` draws with the PDF
+      // default width of 1000/1000 em instead of its real advance, and carries
+      // no text mapping: `first` prints as `fi rst` and extracts as ` rst`.
+      return [
+        key,
+        await doc.embedFont(subset, {
+          subset: false,
+          features: { liga: false, clig: false, dlig: false, rlig: false },
+        }),
+      ] as const;
     }),
   );
 

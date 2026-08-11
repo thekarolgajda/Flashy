@@ -75,9 +75,11 @@ Real Unicode support means embedding font files, and CJK faces are 4 to 17 MB, s
 
 **Subsetting does not use pdf-lib's built-in subsetter.** Its bundled fontkit silently drops glyphs from large CJK faces: kana and Hangul come out blank while neighbouring characters render fine. `src/lib/subset.ts` drives harfbuzz (`public/harfbuzz-subset.wasm`) directly, then embeds the already-minimal result with `subset: false`. This keeps output PDFs at tens of kilobytes and is why `@pdf-lib/fontkit` is still registered but never asked to subset.
 
-Three traps if you touch this:
+Four traps if you touch this:
 
 - Fraunces cuts must be instanced with **`opsz=44` pinned**. At the axis default the instance renders with gaps inside words through pdf-lib, even though its `hmtx` advances look correct when inspected. Symptom: `What's the` prints as `Wh at's th e`.
+
+- **Ligatures must stay off**, via `features: { liga: false, clig: false, dlig: false, rlig: false }` on the `embedFont()` call. pdf-lib derives both the `/W` widths and the `ToUnicode` map from `allGlyphsInFontSortedById`, which resolves glyphs from `font.characterSet` — by code point. A ligature glyph is reachable only through GSUB, so it lands in neither table: the viewer falls back to the PDF default width of 1000/1000 em against a real advance of 642, and the glyph carries no text mapping. Symptom: `first` prints as `fi rst` and extracts as ` rst`. Note this looks like the `opsz` trap above but is a different fault — check whether the gaps sit only at ligature pairs (`fi`, `fl`, `ffi`) before reaching for the axis. It also desyncs layout from print, since `fitText()` measures through `widthOfTextAtSize()` and gets the correct advance the viewer ignores, so an affected line can overrun the card.
 
 - CJK fonts must be **TrueType**, not the smaller CFF-flavoured OTFs. fontkit mis-parses subsetted CFF and every glyph renders as tofu.
 - fontkit mutates the buffer it parses, so `fonts.ts` probes coverage on a copy and keeps pristine bytes for embedding.
