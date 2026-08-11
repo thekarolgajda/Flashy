@@ -86,3 +86,24 @@ the architecture and the font traps worth knowing before changing print output.
 
 Next.js (App Router) · React · Tailwind CSS · [pdf-lib](https://pdf-lib.js.org)
 · harfbuzz-wasm for font subsetting · Fraunces and Noto Sans
+
+## Licence
+
+The code is MIT, see [LICENSE](LICENSE).
+
+The bundled third-party files keep their own licences, which travel with them:
+
+- Fraunces and Noto Sans, including the CJK faces in `public/fonts/`, are under
+  the SIL Open Font License 1.1. The licence text sits beside them as
+  `OFL-Fraunces.txt`, `OFL-NotoSans.txt` and `OFL-NotoSansCJK.txt`.
+- `public/harfbuzz-subset.wasm` comes from
+  [harfbuzzjs](https://github.com/harfbuzz/harfbuzzjs) and is MIT, see
+  `public/LICENSE-harfbuzzjs.txt`.
+
+Cards are subsetted from these fonts and embedded in the PDFs you generate,
+which the OFL permits: the licence restricts selling the fonts themselves, not
+documents set in them.
+
+---
+
+Made by [Karol Gajda](https://karol.gajda.com).

@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# real decks, kept out of a public repo. Sample decks are committed by name.
+/EasyHardCringeyOthers.csv
