@@ -13,6 +13,8 @@
 
 import fontkit from "@pdf-lib/fontkit";
 
+import { assetUrl } from "./assets";
+
 export type FontPackId = "latin" | "sc" | "jp" | "kr";
 
 type PackDefinition = {
@@ -65,7 +67,9 @@ type FontkitFont = { hasGlyphForCodePoint(codePoint: number): boolean };
 
 const cache = new Map<FontPackId, Promise<LoadedPack>>();
 
-async function fetchFont(url: string): Promise<Uint8Array> {
+async function fetchFont(path: string): Promise<Uint8Array> {
+  // Paths above are written root-relative; assetUrl() applies the deploy prefix.
+  const url = assetUrl(path);
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Could not load font ${url} (${response.status})`);
   return new Uint8Array(await response.arrayBuffer());

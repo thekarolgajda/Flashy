@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { assetUrl } from "@/lib/assets";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +28,14 @@ export const metadata: Metadata = {
   title: "Flashy: printable flashcard PDFs",
   description:
     "Turn a list of cards or a CSV into a double-sided, printable flashcard PDF. Everything runs in your browser.",
+  // Next prefixes its own routes and chunks with basePath, but not these, so
+  // they need assetUrl() to survive being served from /Flashy.
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "32x32" },
+      { url: assetUrl("/icon.svg"), type: "image/svg+xml" },
+      { url: assetUrl("/favicon.ico"), sizes: "32x32" },
     ],
-    apple: "/apple-icon.png",
+    apple: assetUrl("/apple-icon.png"),
   },
 };
 

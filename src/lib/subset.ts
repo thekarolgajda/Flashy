@@ -11,7 +11,9 @@
  * a printed flashcard wants anyway.
  */
 
-const WASM_URL = "/harfbuzz-subset.wasm";
+import { assetUrl } from "./assets";
+
+const WASM_PATH = "/harfbuzz-subset.wasm";
 
 /** The subset of the hb-subset C API this module drives. */
 type HarfbuzzExports = {
@@ -46,7 +48,7 @@ let runtime: Promise<HarfbuzzExports> | null = null;
 function loadHarfbuzz(): Promise<HarfbuzzExports> {
   if (!runtime) {
     runtime = (async () => {
-      const response = await fetch(WASM_URL);
+      const response = await fetch(assetUrl(WASM_PATH));
       if (!response.ok) {
         throw new Error(`Could not load the subsetter (${response.status})`);
       }
