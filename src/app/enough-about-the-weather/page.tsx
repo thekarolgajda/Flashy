@@ -34,24 +34,22 @@ export const metadata: Metadata = {
 const PILES = [
   {
     front: "Easy",
-    blurb: "Warm-ups. Answerable without thinking, which is the point. Nobody opens cold.",
+    blurb: "Light questions. Favorites, would-you-rathers, what you got up to this year.",
     example: "What's your favorite thing to do on a snow day?",
   },
   {
     front: "Hard",
-    blurb: "Takes a beat. Still nothing personal at stake, just a question worth chewing on.",
+    blurb: "Questions that take more thought. Still nothing personal at stake.",
     example: "If you could only keep one possession, what would it be?",
   },
   {
     front: "Seriously?",
-    blurb:
-      "The sincere ones. Every card in this pile carries a dollar value, and the pile is named for the noise people make when they draw one.",
+    blurb: "The sincere ones. Every card in this pile carries a dollar value.",
     example: "What are you most proud of?",
   },
   {
     front: "Ask others",
-    blurb:
-      "The reversal. The player doesn't answer this one. They aim it at an adult, and then anyone else can follow.",
+    blurb: "You don't answer this one. You ask it of somebody else at the table.",
     example: "What was dating like before smartphones?",
   },
 ];
@@ -61,42 +59,41 @@ const STEPS: { title: string; body: ReactNode }[] = [
     title: "Write the questions",
     body: (
       <>
-        This is the first rule because it is the best part of the game, not preparation for it.
-        Sort them into the four piles as you go, and put a dollar value on each Seriously? card.
-        Write a fresh set every year. If you want somewhere to start, take{" "}
+        Part of the game, not preparation for it. Sort them into the four piles as you go, and put
+        a dollar value on each Seriously? card. Start from{" "}
         <a
           href="#starter-questions"
           className="underline decoration-rule underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
         >
           ours
-        </a>
-        .
+        </a>{" "}
+        if you like.
       </>
     ),
   },
   {
     title: "Print the deck",
-    body: "Two columns, pile name and question, run through Flashy into a double-sided PDF you print at home and cut apart. Make it as long or as short as you like. There is no correct number of cards.",
+    body: "Any length. There is no correct number of cards.",
   },
   {
     title: "The youngest players drive",
-    body: "At our table that's the teens. They run the game: they pick the pile and they take the card. Adults don't deal, don't choose, and don't decide when it's time for a serious one.",
+    body: "At our table that's the teens. They pick the pile and they take the card.",
   },
   {
     title: "Pick a pile, take the top card",
-    body: "Choosing the pile is choosing the temperature. A table that stays in Easy all night has still played the game correctly.",
+    body: "The pile is the choice. The card is whatever comes up.",
   },
   {
     title: "Earn your way to Seriously?",
-    body: "You have to answer an Easy or a Hard question before you may take a Seriously? card. Nobody opens on a sincere one, and nobody skips straight to the money.",
+    body: "Answer an Easy or a Hard question first. No opening on a sincere one.",
   },
   {
     title: "Answer it, or ask it",
-    body: "Easy, Hard and Seriously? cards are answered by the player who drew them. An Ask others card gets pointed at somebody else instead.",
+    body: "Easy, Hard and Seriously? cards are answered by the player who drew them. An Ask others card gets pointed at somebody else.",
   },
   {
     title: "Pass as often as you like",
-    body: "Any card can go back for another. No forfeit, no penalty, no comment from the table. The freedom to pass is what makes people willing to not.",
+    body: "Put it back and draw another. No forfeit, no penalty.",
   },
   {
     title: "Play until the deck runs out",
@@ -152,10 +149,8 @@ export default function EnoughAboutTheWeatherPage() {
 
       <p className="mt-8 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
         A question game for the dinner table, built for a family with teenagers in it. You write
-        the questions yourselves, which is the first rule and half the fun. The other half runs on
-        one idea: the questions aren&rsquo;t the hard part. Everybody already knows what
-        they&rsquo;re proudest of. Saying it out loud, to the people who raised you or the people
-        you raised, is the hard part, so the cards that ask for that come with money attached.
+        the questions yourselves, sort them into four piles, and print them as cards. The youngest
+        players run the evening. One pile carries money.
       </p>
 
       <div className="rule-dashed mt-14" />
@@ -188,8 +183,7 @@ export default function EnoughAboutTheWeatherPage() {
           The four piles
         </h2>
         <p className="mt-4 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-          Every card names its pile on the front, above the mark. The deck is sorted so a player
-          can see what they&rsquo;re choosing before they choose it.
+          Every card names its pile on the front, above the mark.
         </p>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {PILES.map((pile) => (
@@ -204,17 +198,15 @@ export default function EnoughAboutTheWeatherPage() {
         </h2>
         <div className="mt-8 rounded-xl bg-card p-6 ring-1 ring-rule sm:p-8">
           <p className="max-w-[62ch] text-[1.0625rem] leading-relaxed">
-            Only <span className="font-semibold">Seriously?</span> cards pay. The amount is printed
-            on the card, from{" "}
-            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$1</span> to{" "}
-            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$5</span>. We settle up
-            at the end of the night, but when the money actually changes hands is up to whoever is
-            playing.
+            Only <span className="font-semibold">Seriously?</span> cards carry money. The amount
+            is printed on the card, between{" "}
+            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$1</span> and{" "}
+            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$5</span>.
           </p>
           <p className="mt-5 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-            One adult banks the whole game. Nobody else chips in, and there&rsquo;s no pot to divide
-            at the end. It&rsquo;s a bribe, paid by the person who most wants to hear the answer.
-            Pass on a card and no money moves, which is the only thing passing costs.
+            An adult banks the whole game. There is no pot and nothing to divide up at the end.
+            Pass on a card and you don&rsquo;t collect, which is all passing costs. When you settle
+            up is your business. We do it at the end of the night.
           </p>
         </div>
       </section>
@@ -265,8 +257,7 @@ Ask others,What was dating like before smartphones?`}</code>
             Starter questions
           </h3>
           <p className="mt-3 max-w-[62ch] text-[0.9375rem] leading-relaxed text-ink-soft">
-            Thirty-one of ours to begin with, across all four piles. Use them as they are, or read
-            them once and then write your own, which is the better game.
+            Thirty-one of ours, across all four piles. Use them as they are, or write your own.
           </p>
           <a
             href={assetUrl("/enough-about-the-weather-sample.csv")}
