@@ -43,3 +43,6 @@ next-env.d.ts
 # real decks, kept out of a public repo. Sample decks are committed by name.
 /EasyHardCringeyOthers.csv
 /Easy_Hard_Cringey questions - 2026 Questions.csv
+
+# demo recordings and thumbnail sources, far too large for the repo
+/Presentation/
