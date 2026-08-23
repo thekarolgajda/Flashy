@@ -40,7 +40,8 @@ Everything runs client-side. There are no API routes, no server actions, and no 
 - `src/lib/fonts.ts`: script packs, lazy loading, and per-string face selection.
 - `src/lib/subset.ts`: harfbuzz-wasm font subsetting.
 - `src/lib/categories.ts`: card categories and their ornament path data.
-- `src/app/page.tsx`: the single client component holding all UI state.
+- `src/app/(paper)/page.tsx`: the single client component holding all UI state. The `(paper)` group exists so the app and its credit footer share a layout the game page does not; route groups do not change URLs, so this is still `/`.
+- `src/app/enough-about-the-weather/`: the game's own page, with its own fonts, stylesheet and mark. It is a separate visual world on purpose; see The Game Page in DESIGN.md before editing it.
 - `src/components/`: the logo and the category mark, both shared with the print side's design.
 
 A row width note for CSV: the expected column count comes from the header, or the modal row width. Rows **wider** than expected are treated as an unquoted delimiter inside the last column and stitched back together, rather than having their tail dropped. That was a real bug; a question containing a comma silently lost everything after it.

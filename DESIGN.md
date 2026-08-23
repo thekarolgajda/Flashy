@@ -8,6 +8,8 @@ The scene: someone at a desk in daylight, about to send paper through a printer,
 
 Personality comes from citrus accents against warm paper neutrals, generous spacing, and motion that reveals the printed result. Never from gradients, glass, texture overlays, or illustration.
 
+This describes the app. The game page at `/enough-about-the-weather` is a second, deliberately unrelated visual world; see The Game Page below before assuming these rules apply site-wide.
+
 ## Color
 
 OKLCH throughout. Every neutral is tinted toward the citrus hue (~96°) so nothing reads as cold grey. No pure black or white anywhere.
@@ -75,6 +77,59 @@ Two cards caught mid-shuffle, in `src/components/logo.tsx` and mirrored as a fav
 150 to 250ms, `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quart). Transform and opacity only.
 
 Motion is reserved for revealing state: the segmented pill, the card flip, the sheet diagram redrawing when the layout changes. No page-load choreography. All of it collapses to instant under `prefers-reduced-motion: reduce`.
+
+## The Game Page
+
+`/enough-about-the-weather` does not follow anything above it. Enough About the Weather! is a boxed game that happens to be printed with Flashy, not a page of Flashy, and the design says so: nothing about the route reads as the app wearing a different colour.
+
+Everything is scoped under `.eatw` in `src/app/enough-about-the-weather/edition.css` and never touches the app's tokens. The two systems share exactly one thing, `CategoryMark`, so the four piles on screen carry the same path data the printer draws.
+
+**Register.** Brand, not product. The app serves a task; this page is the artifact. It gets typographic risk, a drenched ground, and art direction the app would never earn.
+
+### Colour
+
+Strategy: **drenched**. The brick lid is the surface, not a background behind content.
+
+| Token | Value | Role |
+|---|---|---|
+| `--brick` | `oklch(0.505 0.175 32)` | The lid. The page ground |
+| `--brick-deep` | `oklch(0.355 0.13 30)` | Box edge, prose links on cream, the banknote figure |
+| `--cream` | `oklch(0.945 0.038 85)` | Reading panels, copy on brick |
+| `--cream-dim` | `oklch(0.90 0.045 84)` | Pile cards and the starter box, one step back from a panel |
+| `--edition-ink` | `oklch(0.225 0.05 38)` | Every rule and border, body copy on cream |
+| `--edition-ink-soft` | `oklch(0.39 0.045 40)` | Secondary copy on cream |
+| `--mustard` | `oklch(0.83 0.155 85)` | Primary buttons, the second headline line, the footer rule |
+| `--fluo` | `oklch(0.70 0.235 8)` | Fluorescent pink. **Fills only** |
+| `--fluo-deep` | `oklch(0.58 0.235 8)` | The same ink where it has to carry a glyph |
+| `--edition-teal` | `oklch(0.55 0.10 205)` | The Hard disc, and the banknote's hatching |
+
+**The pink is spent on four things and no more:** the exclamation point, the words "one of them pays", the Seriously? sticker, and the rule numerals. That is the pile carrying money and the promise that it does, so the loudest ink in the system points at the one thing the game is about. Spending it anywhere else spends the only emphasis the page has.
+
+**Pink is a fill, not a text colour.** At riso brightness it measures 2.77:1 on cream and 1.97:1 on brick, so it fails as type in both directions. Anything set *in* pink uses `--fluo-deep` (4.11:1 on cream); anything set *on* pink takes `--edition-ink` (5.32:1). The hero's exclamation point is mustard with the pink offset behind it, two inks out of register, which is how it stays both legible and fluorescent. Mustard is likewise large-text only on brick at 3.76:1: the ticker, footer copy and links are cream.
+
+### Typography
+
+**Anybody** for display, **Archivo** for reading, loaded in the route's own layout so they never ship with the app. Neither appears anywhere else in Flashy, which is the point.
+
+Anybody is a variable grotesque carrying a width axis, and the width is doing the work, not the weight alone: the headline runs at `wdth 120 / wght 900` so it fills the lid edge to edge, section headings at 116, buttons and stickers at 78 to 86 where the copy has to compress. Set `font-variation-settings` explicitly on anything display; the axis default is nowhere near wide enough and reads as an ordinary bold sans.
+
+The headline is authored as three stacked lines rather than left to wrap, and the last line is `white-space: nowrap` so the exclamation point can never separate from the word it belongs to.
+
+### Composition
+
+A box lid: a 3px ink border with a dashed cream rule inside it, cream panels stacked down the middle, and a hard offset shadow that makes the whole thing sit on the page like an object with a thickness.
+
+- **The four piles are dealt, not gridded.** Each card carries a small fixed rotation and squares up on hover. Even spacing would make them a table of contents.
+- **The edition stamp is load-bearing.** The deck is reissued yearly, so the year is stated on the lid like a date stamp on a box. Next year it changes and the page is new again. It is not decoration and should not be dropped.
+- **Buttons are physical**: 3px ink border, a 5px hard shadow underneath, and they travel on press. No radius anywhere on the page except the discs and the mark.
+
+### The mark
+
+A rain cloud that is also a speech bubble, with the rain replaced by an exclamation point. Small talk, ended. It lives in `src/app/enough-about-the-weather/mark.tsx` and is deliberately not the Flashy card-stack: the game is its own object. Flashy is credited in the footer instead.
+
+### Route structure
+
+The app and its credit footer live in the `(paper)` route group; the game page brings its own footer and could not sit on Flashy's paper ground. Route groups do not change URLs, so `/` is unaffected.
 
 ## Print Design (the PDF)
 
