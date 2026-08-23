@@ -100,7 +100,7 @@ const STEPS: { title: string; body: ReactNode }[] = [
   },
   {
     title: "Play until the deck runs out",
-    body: "However many cards you wrote, that's the evening. No score, nobody wins.",
+    body: "However many cards you wrote, that's the evening. No score, everybody wins!",
   },
 ];
 
