@@ -46,3 +46,6 @@ next-env.d.ts
 
 # demo recordings and thumbnail sources, far too large for the repo
 /Presentation/
+
+# generated deck, kept out of a public repo
+/EasyHardSerious.pdf
