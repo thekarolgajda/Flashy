@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { parseCards, SAMPLE_INPUT, type Card, type ParseResult } from "@/lib/cards";
 import { parseCardsFromCsv } from "@/lib/csv";
 import { requiredPacks } from "@/lib/fonts";
@@ -297,7 +298,7 @@ export default function Home() {
           <Logo />
         </h1>
         {/* The wordmark is the h1, so this line carries what the page is
-            actually about — for a reader landing cold, and for a search
+            actually about, for a reader landing cold, and for a search
             result, which has only the words to go on. */}
         <p className="font-display mt-5 max-w-[24ch] text-[clamp(1.35rem,3.2vw,1.75rem)] leading-[1.25] font-semibold tracking-[-0.015em]">
           Free printable flashcards, laid out for double-sided printing.
@@ -309,6 +310,32 @@ export default function Home() {
         <p className="mt-2.5 text-[0.8125rem] text-ink-soft">
           Built in your browser. Nothing you type is uploaded anywhere.
         </p>
+
+        {/* The mark is drawn by CategoryMark from the same path data the game's
+            cards print, so the teaser shows the actual ornament, not a stand-in. */}
+        <Link
+          href="/enough-about-the-weather"
+          className="group mt-8 flex max-w-[34rem] items-center gap-4 rounded-xl border border-rule bg-card px-5 py-4 transition-colors duration-150 hover:border-ink-soft/50"
+        >
+          <CategoryMark front="Seriously?" className="size-8 shrink-0 text-lime-deep" />
+          <span className="min-w-0">
+            <span className="font-display block text-[1.0625rem] leading-tight font-bold tracking-[-0.01em]">
+              Enough About the Weather
+            </span>
+            <span className="mt-1 block text-[0.875rem] leading-snug text-ink-soft">
+              A dinner-table question game made with Flashy.
+            </span>
+            <span className="mt-2 block text-[0.875rem] leading-snug font-semibold text-lime-deep">
+              Read the rules and steal our questions
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="ml-auto shrink-0 text-lime-deep transition-transform duration-150 group-hover:translate-x-0.5"
+          >
+            &rarr;
+          </span>
+        </Link>
       </header>
 
       <div className="grid items-start gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-14">
