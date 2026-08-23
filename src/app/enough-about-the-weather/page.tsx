@@ -149,8 +149,15 @@ export default function EnoughAboutTheWeatherPage() {
 
       <p className="mt-8 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
         A question game for the dinner table, built for a family with teenagers in it. You write
-        the questions yourselves, sort them into four piles, and print them as cards. The youngest
-        players run the evening. One pile carries money.
+        the questions yourselves (use our{" "}
+        <a
+          href="#starter-questions"
+          className="underline decoration-rule underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
+        >
+          starter deck
+        </a>{" "}
+        for inspiration), sort them into four piles, and print them as cards. The youngest players
+        run the evening. One pile carries money.
       </p>
 
       <div className="rule-dashed mt-14" />
