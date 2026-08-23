@@ -72,19 +72,19 @@ const RULES: { title: string; body: ReactNode }[] = [
   { title: "Print the deck", body: "Any length. There is no correct number of cards." },
   {
     title: "The youngest players drive",
-    body: "At our table that’s the teens. They pick the pile and they take the card.",
+    body: "At our table that’s the teens. They run the deck all evening, so the rules below call them the drivers.",
   },
   {
     title: "Pick a pile, take the top card",
-    body: "The pile is the choice. The card is whatever comes up.",
+    body: "The four piles sit face down. The driver reaches for one, takes the top card and reads it out. They choose the pile, not the question.",
   },
   {
     title: "Earn your way to Seriously?",
-    body: "Answer an Easy or a Hard question first. No opening on a sincere one.",
+    body: "Answer an Easy or a Hard question first. No opening on a money question.",
   },
   {
     title: "Answer it, or ask it",
-    body: "Easy, Hard and Seriously? cards are answered by the player who drew them. An Ask others card gets pointed at somebody else, then opens to the table.",
+    body: "Easy, Hard and Seriously? cards are answered by the player who drew them. An Ask others card gets pointed at somebody else, and once they have answered it opens to the table, so anyone who wants to answer it can.",
   },
   {
     title: "Pass as often as you like",
@@ -217,7 +217,7 @@ export default function EnoughAboutTheWeatherPage() {
             <h2 className="display">The money</h2>
             <p className="sub">
               Only Seriously? cards carry money, and the amount is printed on the card. An adult
-              banks the whole game: there is no pot, and nothing to divide up at the end.
+              banks the whole game.
             </p>
             <p className="sub">
               Pass on a card and you don&rsquo;t collect, which is all passing costs. When you
