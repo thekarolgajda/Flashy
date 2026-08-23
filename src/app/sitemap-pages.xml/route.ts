@@ -21,8 +21,8 @@ import { SITE_URL } from "@/lib/site";
 export const dynamic = "force-static";
 
 export function GET() {
-  // Single-page site, so this is the whole deck. lastmod is the build date:
-  // honest enough for a page that changes when the app is deployed.
+  // lastmod is the build date: honest enough for pages that change when the
+  // app is deployed.
   const lastmod = new Date().toISOString().slice(0, 10);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -32,6 +32,12 @@ export function GET() {
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/enough-about-the-weather</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
 `;
