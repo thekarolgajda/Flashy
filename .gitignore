@@ -52,3 +52,6 @@ next-env.d.ts
 
 # working copy of the sample deck; the published one is public/enough-about-the-weather-sample.csv
 /EnoughAboutTheWeatherSampleQuestions.csv
+
+# design mockups for the game page; the chosen direction is in src/app/enough-about-the-weather
+/mockups/
