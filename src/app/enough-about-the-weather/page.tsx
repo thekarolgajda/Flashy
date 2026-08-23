@@ -243,9 +243,7 @@ Ask others,What was dating like before smartphones?`}</code>
             The pile names are recognised from the text itself, so there&rsquo;s no setting to
             change: write <span className="literal">Easy</span>,{" "}
             <span className="literal">Hard</span>, <span className="literal">Seriously?</span> and{" "}
-            <span className="literal">Ask others</span> and each card prints its own mark. Rename a
-            pile to whatever your table calls it. <span className="literal">Cringey</span> and{" "}
-            <span className="literal">Possibly Serious</span> both land on the same ornament.
+            <span className="literal">Ask others</span> if you want to play it like we do.
           </p>
 
           {/*
