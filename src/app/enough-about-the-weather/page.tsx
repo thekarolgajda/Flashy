@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { CategoryMark } from "@/components/category-mark";
-import { LogoMark } from "@/components/logo";
 import { assetUrl } from "@/lib/assets";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { WeatherMark } from "./mark";
 
 const TITLE = "Enough About the Weather: A Dinner-Table Question Game";
 const DESCRIPTION =
@@ -28,56 +28,51 @@ export const metadata: Metadata = {
 /*
  * The four piles, each rendered with the ornament the PDF prints. `front` is
  * the literal label a deck's first column carries, so CategoryMark resolves it
- * through categoryFor() exactly as the printed card does. The sheet cannot
+ * through categoryFor() exactly as the printed card does. The page cannot
  * show a mark the printer would not.
  */
 const PILES = [
   {
     front: "Easy",
     blurb: "Light questions. Favorites, would-you-rathers, what you got up to this year.",
-    example: "What's your favorite thing to do on a snow day?",
+    example: "What’s your favorite thing to do on a snow day?",
+    sticker: null,
   },
   {
     front: "Hard",
     blurb: "Questions that take more thought. Still nothing personal at stake.",
     example: "If you could only keep one possession, what would it be?",
+    sticker: null,
   },
   {
     front: "Seriously?",
     blurb: "The sincere ones. Every card in this pile carries a dollar value.",
     example: "What are you most proud of?",
+    sticker: "Pays $1 to $5",
   },
   {
     front: "Ask others",
-    blurb: "You don't answer this one. You ask it of somebody else at the table.",
+    blurb: "You don’t answer this one. You ask it of somebody else at the table.",
     example: "What was dating like before smartphones?",
+    sticker: null,
   },
 ];
 
-const STEPS: { title: string; body: ReactNode }[] = [
+const RULES: { title: string; body: ReactNode }[] = [
   {
     title: "Write the questions",
     body: (
       <>
         Part of the game, not preparation for it. Sort them into the four piles as you go, and put
-        a dollar value on each Seriously? card. Start from{" "}
-        <a
-          href="#starter-questions"
-          className="underline decoration-rule underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-        >
-          ours
-        </a>{" "}
-        if you like.
+        a dollar value on each Seriously? card. Start from <a href="#starter-questions">ours</a> if
+        you like.
       </>
     ),
   },
-  {
-    title: "Print the deck",
-    body: "Any length. There is no correct number of cards.",
-  },
+  { title: "Print the deck", body: "Any length. There is no correct number of cards." },
   {
     title: "The youngest players drive",
-    body: "At our table that's the teens. They pick the pile and they take the card.",
+    body: "At our table that’s the teens. They pick the pile and they take the card.",
   },
   {
     title: "Pick a pile, take the top card",
@@ -89,7 +84,7 @@ const STEPS: { title: string; body: ReactNode }[] = [
   },
   {
     title: "Answer it, or ask it",
-    body: "Easy, Hard and Seriously? cards are answered by the player who drew them. An Ask others card gets pointed at somebody else.",
+    body: "Easy, Hard and Seriously? cards are answered by the player who drew them. An Ask others card gets pointed at somebody else, then opens to the table.",
   },
   {
     title: "Pass as often as you like",
@@ -97,181 +92,194 @@ const STEPS: { title: string; body: ReactNode }[] = [
   },
   {
     title: "Play until the deck runs out",
-    body: "However many cards you wrote, that's the evening. No score, everybody wins!",
+    body: "However many cards you wrote, that’s the evening. No score, everybody wins!",
   },
 ];
 
-function Pile({ front, blurb, example }: (typeof PILES)[number]) {
+function Pile({ front, blurb, example, sticker }: (typeof PILES)[number]) {
   return (
-    <li className="flex flex-col rounded-xl bg-card p-5 ring-1 ring-rule">
-      <div className="flex items-center gap-3">
-        <CategoryMark front={front} className="size-7 shrink-0 text-ink-soft" />
-        <h3 className="font-display text-[1.25rem] leading-none font-bold tracking-[-0.015em]">
-          {front}
-        </h3>
-      </div>
-      <p className="mt-3.5 text-[0.9375rem] leading-relaxed text-ink-soft">{blurb}</p>
-      <p className="font-display mt-4 border-t border-rule pt-3.5 text-[0.9375rem] leading-snug text-balance">
-        {example}
-      </p>
+    <li className="pile">
+      {sticker && <span className="sticker display">{sticker}</span>}
+      <span className="disc">
+        <CategoryMark front={front} />
+      </span>
+      <h3 className="display">{front}</h3>
+      <p>{blurb}</p>
+      <p className="example">{example}</p>
     </li>
   );
 }
 
 export default function EnoughAboutTheWeatherPage() {
   return (
-    <main className="mx-auto w-full max-w-5xl grow px-6 py-14 sm:py-20">
-      <Link
-        href="/"
-        className="logo group inline-flex items-center gap-2.5 text-ink-soft transition-colors hover:text-ink"
-      >
-        <LogoMark className="size-7 shrink-0" />
-        <span className="font-display text-[1.125rem] leading-none font-bold tracking-[-0.02em]">
-          Flashy
-        </span>
-      </Link>
-
-      {/*
-        Both lines are bound with non-breaking spaces rather than trusted to
-        text-balance alone. Balance equalises line lengths but will still hang
-        an article at a line end, and it has no idea that "Easy questions, hard
-        questions" is a parallel that must not be split across lines, which is
-        the whole rhythm of the sentence.
-      */}
-      <header className="mt-12">
-        <h1 className="font-display max-w-[20ch] text-[clamp(2.5rem,6.5vw,4rem)] leading-[0.98] font-bold tracking-[-0.03em] text-balance">
-          Enough About the&nbsp;Weather
-        </h1>
-        <p className="font-display mt-7 max-w-[40ch] text-[clamp(1.2rem,3vw,1.6rem)] leading-[1.35] font-semibold tracking-[-0.015em] text-balance">
-          Easy questions, hard&nbsp;questions, and a few we&rsquo;ll pay you to&nbsp;answer.
-        </p>
-      </header>
-
-      <p className="mt-8 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-        A question game for the dinner table, built for a family with teenagers in it. You write
-        the questions yourselves (use our{" "}
-        <a
-          href="#starter-questions"
-          className="underline decoration-rule underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-        >
-          starter deck
-        </a>{" "}
-        for inspiration), sort them into four piles, and print them as cards. The youngest players
-        run the evening. One pile carries money.
-      </p>
-
-      <div className="rule-dashed mt-14" />
-
-      <section className="mt-12">
-        <h2 className="font-display text-[2rem] leading-none font-bold tracking-[-0.02em]">
-          How it&rsquo;s played
-        </h2>
-        <ol className="mt-8 grid gap-px overflow-hidden rounded-xl bg-rule ring-1 ring-rule">
-          {STEPS.map((step, index) => (
-            <li key={step.title} className="flex gap-5 bg-card px-5 py-5 sm:px-6">
-              <span className="font-display text-[1.5rem] leading-none font-bold text-lime-deep">
-                {index + 1}
-              </span>
-              <div>
-                <h3 className="font-display text-[1.125rem] leading-tight font-bold tracking-[-0.01em]">
-                  {step.title}
-                </h3>
-                <p className="mt-2 max-w-[62ch] text-[0.9375rem] leading-relaxed text-ink-soft">
-                  {step.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="mt-16">
-        <h2 className="font-display text-[2rem] leading-none font-bold tracking-[-0.02em]">
-          The four piles
-        </h2>
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-          {PILES.map((pile) => (
-            <Pile key={pile.front} {...pile} />
-          ))}
-        </ul>
-      </section>
-
-      <section className="mt-16">
-        <h2 className="font-display text-[2rem] leading-none font-bold tracking-[-0.02em]">
-          The money
-        </h2>
-        <div className="mt-8 rounded-xl bg-card p-6 ring-1 ring-rule sm:p-8">
-          <p className="max-w-[62ch] text-[1.0625rem] leading-relaxed">
-            Only <span className="font-semibold">Seriously?</span> cards carry money. The amount
-            is printed on the card, between{" "}
-            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$1</span> and{" "}
-            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$5</span>.
-          </p>
-          <p className="mt-5 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-            An adult banks the whole game. There is no pot and nothing to divide up at the end.
-            Pass on a card and you don&rsquo;t collect, which is all passing costs. When you settle
-            up is your business. We do it at the end of the night.
-          </p>
+    <main className="lid">
+      <div className="lid-inner">
+        <div className="brandbar">
+          <span className="mark display">
+            <WeatherMark />
+            <b>Enough About the Weather!</b>
+          </span>
+          <span className="ticker display">
+            A dinner-table question game &middot; Print it yourself
+          </span>
         </div>
-      </section>
 
-      <section className="mt-16">
-        <h2 className="font-display text-[2rem] leading-none font-bold tracking-[-0.02em]">
-          Writing the deck
-        </h2>
-        <p className="mt-4 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-          Rule one, in practice. The deck is a two-column CSV (pile name, then question) run
-          through{" "}
-          <Link
-            href="/"
-            className="underline decoration-rule underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-          >
-            Flashy
-          </Link>
-          , which lays it out as a double-sided PDF you can print at home and cut apart. Pick the
-          20-per-sheet grid for card-game proportions.
-        </p>
-        <pre className="mt-6 overflow-x-auto rounded-xl bg-card p-5 font-mono text-[0.8125rem] leading-relaxed text-ink-soft ring-1 ring-rule">
-          <code>{`Easy,What is your favorite color?
+        {/*
+          The line breaks are authored rather than left to wrapping: the
+          headline is set as three stacked lines of one composition, and the
+          exclamation point has to stay welded to the word it belongs to.
+        */}
+        <header className="hero">
+          <span className="edition display">2026 edition</span>
+          <h1 className="display">
+            <span>Enough</span>
+            <span className="l2">About the</span>
+            <span className="l3">
+              Weather<span className="bang">!</span>
+            </span>
+          </h1>
+          <div className="stripe" />
+          <div className="deck-line">
+            <p className="tag display">
+              Easy questions, hard questions, and{" "}
+              <mark>a few we&rsquo;ll pay you to answer.</mark>
+            </p>
+            <div>
+              <p className="meta">
+                A question game for a family with teenagers in it. You write the cards, the
+                youngest players run the evening, and one pile carries cash.
+              </p>
+              <ul className="players display">
+                <li>3 to 10 players</li>
+                <li>Ages 12 and up</li>
+                <li>One evening</li>
+                <li>Bring scissors</li>
+              </ul>
+              <div className="cta">
+                <a className="btn btn-primary display" href="#starter-questions">
+                  Get the deck
+                </a>
+                <a className="btn btn-secondary display" href="#rules">
+                  Rules
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section className="panel">
+          <h2 className="display">
+            Four piles.
+            <br />
+            <em>One of them pays.</em>
+          </h2>
+          <p className="sub">
+            You write the questions yourselves and sort them as you go. That part is the game, not
+            the setup for it.
+          </p>
+          <ul className="piles">
+            {PILES.map((pile) => (
+              <Pile key={pile.front} {...pile} />
+            ))}
+          </ul>
+        </section>
+
+        <section className="panel" id="rules">
+          <h2 className="display">How it&rsquo;s played</h2>
+          <p className="sub">Eight rules. That&rsquo;s all of them.</p>
+          <ol className="rules">
+            {RULES.map((rule) => (
+              <li key={rule.title}>
+                <div>
+                  <h3 className="display">{rule.title}</h3>
+                  <p>{rule.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="money on-brick">
+          <div className="note">
+            <div className="note-line display">
+              <span>Seriously? pile</span>
+              <span>No. 003</span>
+            </div>
+            <p className="note-figure display">
+              $1&ndash;$5<small>Printed on the card</small>
+            </p>
+            <div className="note-line display">
+              <span>One banker</span>
+              <span>Paid on sincerity</span>
+            </div>
+          </div>
+          <div>
+            <h2 className="display">The money</h2>
+            <p className="sub">
+              Only Seriously? cards carry money, and the amount is printed on the card. An adult
+              banks the whole game: there is no pot, and nothing to divide up at the end.
+            </p>
+            <p className="sub">
+              Pass on a card and you don&rsquo;t collect, which is all passing costs. When you
+              settle up is your business. We do it at the end of the night.
+            </p>
+          </div>
+        </section>
+
+        <section className="panel">
+          <h2 className="display">Make your own deck</h2>
+          <p className="sub">
+            Rule one, in practice. The deck is a two-column CSV (pile name, then question) run
+            through <Link href="/">Flashy</Link>, which lays it out as a double-sided PDF you can
+            print at home and cut apart. Pick the 20-per-sheet grid for card-game proportions.
+          </p>
+          <pre>
+            <code>{`Easy,What is your favorite color?
 Hard,What is your dream vacation?
 Seriously?,What are you most proud of? $3
 Ask others,What was dating like before smartphones?`}</code>
-        </pre>
-        <p className="mt-6 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-          The pile names are recognised from the text itself, so there&rsquo;s no setting to
-          change: write <span className="font-mono text-[0.9375rem]">Easy</span>,{" "}
-          <span className="font-mono text-[0.9375rem]">Hard</span>,{" "}
-          <span className="font-mono text-[0.9375rem]">Seriously?</span> and{" "}
-          <span className="font-mono text-[0.9375rem]">Ask others</span> and each card prints its
-          own mark. Rename a pile to whatever your table calls it.{" "}
-          <span className="font-mono text-[0.9375rem]">Cringey</span> and{" "}
-          <span className="font-mono text-[0.9375rem]">Possibly Serious</span> both land on the same
-          ornament.
-        </p>
-
-        {/*
-          Served from public/, so the URL needs assetUrl() to survive the /Flashy
-          base path. Next prefixes its own routes but not a bare href.
-        */}
-        <div
-          id="starter-questions"
-          className="mt-8 scroll-mt-8 rounded-xl bg-card p-6 ring-1 ring-rule"
-        >
-          <h3 className="font-display text-[1.25rem] leading-tight font-bold tracking-[-0.015em]">
-            Starter questions
-          </h3>
-          <p className="mt-3 max-w-[62ch] text-[0.9375rem] leading-relaxed text-ink-soft">
-            Thirty-one of ours, across all four piles. Use them as they are, or write your own.
+          </pre>
+          <p className="sub">
+            The pile names are recognised from the text itself, so there&rsquo;s no setting to
+            change: write <span className="literal">Easy</span>,{" "}
+            <span className="literal">Hard</span>, <span className="literal">Seriously?</span> and{" "}
+            <span className="literal">Ask others</span> and each card prints its own mark. Rename a
+            pile to whatever your table calls it. <span className="literal">Cringey</span> and{" "}
+            <span className="literal">Possibly Serious</span> both land on the same ornament.
           </p>
-          <a
-            href={assetUrl("/enough-about-the-weather-sample.csv")}
-            download="enough-about-the-weather-sample.csv"
-            className="mt-5 inline-flex rounded-lg border border-rule bg-card px-3.5 py-2 text-[0.8125rem] font-medium transition-colors duration-150 hover:border-ink-soft/60 active:bg-rule/30"
-          >
-            Download the sample deck (CSV)
-          </a>
-        </div>
-      </section>
+
+          {/*
+            Served from public/, so the URL needs assetUrl() to survive the
+            /Flashy base path. Next prefixes its own routes but not a bare href.
+          */}
+          <div className="starter" id="starter-questions">
+            <h3 className="display">Starter questions</h3>
+            <p className="sub">
+              Thirty-one of ours, across all four piles. Use them as they are, or write your own.
+            </p>
+            <div className="cta">
+              <a
+                className="btn btn-primary display"
+                href={assetUrl("/enough-about-the-weather-sample.csv")}
+                download="enough-about-the-weather-sample.csv"
+              >
+                Download the deck (CSV)
+              </a>
+              <Link className="btn btn-secondary display" href="/">
+                Open Flashy
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <span>
+            Made with <Link href="/">Flashy</Link> by{" "}
+            <a href="https://karol.gajda.com">Karol Gajda</a>
+          </span>
+          <span>Your questions never leave your browser</span>
+        </footer>
+      </div>
     </main>
   );
 }

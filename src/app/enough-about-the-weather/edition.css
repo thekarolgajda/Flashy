@@ -1,0 +1,579 @@
+/*
+ * Enough About the Weather! is a boxed game, not a page of the app, so it
+ * carries its own ink and its own type. Everything here is scoped under .eatw
+ * and never touches Flashy's tokens.
+ *
+ * The lid is brick, the reading panels are cream, and a third fluorescent ink
+ * is spent on exactly four things: the exclamation point, the word "pays",
+ * the Seriously? sticker, and the rule numerals. That is the pile that carries
+ * money and the promise that it does, so the loudest ink points at the one
+ * thing the game is about.
+ */
+.eatw {
+  --brick: oklch(0.505 0.175 32);
+  --brick-deep: oklch(0.355 0.13 30);
+  --cream: oklch(0.945 0.038 85);
+  --cream-dim: oklch(0.9 0.045 84);
+  --edition-ink: oklch(0.225 0.05 38);
+  --edition-ink-soft: oklch(0.39 0.045 40);
+  --mustard: oklch(0.83 0.155 85);
+  /* Fluorescent pink, riso-bright. It is a fill, not a text color: at this
+     lightness it clears 4.5:1 against nothing, so anything set in pink uses
+     --fluo-deep and anything set on pink uses the ink. */
+  --fluo: oklch(0.7 0.235 8);
+  --fluo-deep: oklch(0.58 0.235 8);
+  --edition-teal: oklch(0.55 0.1 205);
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+
+  background: var(--brick);
+  color: var(--edition-ink);
+  font-family: var(--font-edition-body), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  /* Halftone tooth, so the lid reads as printed rather than filled. */
+  background-image: radial-gradient(oklch(0.355 0.13 30 / 0.2) 1px, transparent 1.4px);
+  background-size: 6px 6px;
+  overflow-x: hidden;
+}
+
+.eatw .display {
+  font-family: var(--font-edition-display), Impact, sans-serif;
+}
+
+/* The lid ----------------------------------------------------------------- */
+.eatw .lid {
+  max-width: 76rem;
+  margin: clamp(1rem, 3vw, 2.5rem) auto;
+  padding: clamp(0.7rem, 2vw, 1.1rem);
+  border: 3px solid var(--edition-ink);
+  box-shadow:
+    0 24px 0 -12px var(--brick-deep),
+    0 44px 70px -30px oklch(0.2 0.05 38 / 0.75);
+}
+
+.eatw .lid-inner {
+  border: 2px dashed oklch(0.945 0.038 85 / 0.5);
+  padding: clamp(1.25rem, 4vw, 3.25rem);
+}
+
+/* Masthead ---------------------------------------------------------------- */
+.eatw .brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--cream);
+}
+
+.eatw .mark {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.eatw .mark svg {
+  width: 2.9rem;
+  height: 2.9rem;
+  flex: none;
+}
+
+.eatw .mark b {
+  font-variation-settings: "wdth" 95, "wght" 800;
+  font-size: 1rem;
+}
+
+.eatw .ticker {
+  font-variation-settings: "wdth" 78, "wght" 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+
+.eatw .hero {
+  margin-top: clamp(1.75rem, 5vw, 3rem);
+  position: relative;
+}
+
+.eatw .hero h1 {
+  margin: 0;
+  text-transform: uppercase;
+  color: var(--cream);
+  font-size: clamp(3rem, 13.5vw, 10.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  font-variation-settings: "wdth" 120, "wght" 900;
+  text-shadow: 0.055em 0.055em 0 var(--edition-ink);
+}
+
+.eatw .hero h1 .l2 {
+  display: block;
+  color: var(--mustard);
+  font-size: 0.56em;
+  font-variation-settings: "wdth" 86, "wght" 800;
+  letter-spacing: 0.005em;
+  margin: 0.1em 0;
+}
+
+/* The last line is held on one line so the exclamation point stays attached
+   to the word it belongs to. */
+.eatw .hero h1 .l3 {
+  display: block;
+  white-space: nowrap;
+  font-size: 0.92em;
+}
+
+.eatw .hero h1 .bang {
+  display: inline-block;
+  color: var(--mustard);
+  /* Pink is too close to the brick in lightness to carry a glyph, so it sits
+     behind the mustard as an out-of-register second ink instead. */
+  text-shadow: 0.055em 0.055em 0 var(--fluo);
+  transform: rotate(7deg);
+}
+
+/* The deck is reissued every year, so the edition is stated like a date stamp
+   on a box rather than buried in the copy. */
+.eatw .edition {
+  position: absolute;
+  top: -0.5rem;
+  right: 0;
+  background: var(--fluo);
+  color: var(--edition-ink);
+  font-variation-settings: "wdth" 80, "wght" 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.8rem;
+  transform: rotate(6deg);
+  border: 2px solid var(--edition-ink);
+}
+
+@media (max-width: 44rem) {
+  .eatw .edition {
+    position: static;
+    display: inline-block;
+    margin-bottom: 1rem;
+    transform: rotate(-3deg);
+  }
+}
+
+.eatw .stripe {
+  height: 9px;
+  margin-top: 1.5rem;
+  background: repeating-linear-gradient(90deg, var(--mustard) 0 26px, transparent 26px 36px);
+}
+
+.eatw .deck-line {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: end;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 52rem) {
+  .eatw .deck-line {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eatw .tag {
+  font-variation-settings: "wdth" 92, "wght" 800;
+  font-size: clamp(1.3rem, 3.4vw, 2.2rem);
+  line-height: 1.12;
+  margin: 0;
+  max-width: 20ch;
+  color: var(--cream);
+}
+
+.eatw .tag mark {
+  background: var(--mustard);
+  color: var(--edition-ink);
+  padding: 0 0.14em;
+}
+
+.eatw .meta {
+  margin: 0;
+  color: oklch(0.945 0.038 85 / 0.82);
+  font-size: 0.9375rem;
+  max-width: 36ch;
+}
+
+.eatw .players {
+  margin: 1.1rem 0 0;
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  padding: 0;
+  list-style: none;
+}
+
+.eatw .players li {
+  background: var(--edition-ink);
+  color: var(--cream);
+  padding: 0.32rem 0.75rem;
+  font-variation-settings: "wdth" 80, "wght" 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Buttons ----------------------------------------------------------------- */
+.eatw .cta {
+  margin-top: 1.4rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.eatw .btn {
+  font-variation-settings: "wdth" 86, "wght" 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.92rem;
+  text-decoration: none;
+  color: var(--edition-ink);
+  border: 3px solid var(--edition-ink);
+  padding: 0.85rem 1.5rem;
+  box-shadow: 0 5px 0 var(--edition-ink);
+  transition:
+    transform 170ms var(--ease-out-quart),
+    box-shadow 170ms var(--ease-out-quart);
+}
+
+.eatw .btn-primary {
+  background: var(--mustard);
+}
+
+.eatw .btn-secondary {
+  background: var(--cream);
+}
+
+.eatw .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 0 var(--edition-ink);
+}
+
+.eatw .btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--edition-ink);
+}
+
+/* Panels ------------------------------------------------------------------ */
+.eatw .panel {
+  background: var(--cream);
+  border: 3px solid var(--edition-ink);
+  margin-top: clamp(2.5rem, 6vw, 4.25rem);
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.eatw h2 {
+  font-variation-settings: "wdth" 116, "wght" 900;
+  text-transform: uppercase;
+  font-size: clamp(1.7rem, 4.6vw, 3rem);
+  line-height: 0.86;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.eatw h2 em {
+  font-style: normal;
+  color: var(--fluo-deep);
+}
+
+.eatw .sub {
+  margin: 0.9rem 0 0;
+  max-width: 58ch;
+  color: var(--edition-ink-soft);
+}
+
+.eatw .on-brick h2,
+.eatw .on-brick p {
+  color: var(--cream);
+}
+
+.eatw .on-brick .sub {
+  color: oklch(0.945 0.038 85 / 0.8);
+}
+
+/* The four piles, dealt slightly crooked ---------------------------------- */
+.eatw .piles {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.15rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.eatw .pile {
+  background: var(--cream-dim);
+  border: 3px solid var(--edition-ink);
+  padding: 1.4rem 1.25rem 1.5rem;
+  position: relative;
+  transform: rotate(var(--tilt));
+  transition: transform 220ms var(--ease-out-quart);
+}
+
+.eatw .piles li:nth-child(1) { --tilt: -1.5deg; --pip: var(--mustard); }
+.eatw .piles li:nth-child(2) { --tilt: 1.1deg; --pip: var(--edition-teal); }
+.eatw .piles li:nth-child(3) { --tilt: -0.7deg; --pip: var(--fluo); }
+.eatw .piles li:nth-child(4) { --tilt: 1.8deg; --pip: var(--brick); }
+
+.eatw .pile:hover {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+.eatw .disc {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background: var(--pip);
+  border: 3px solid var(--edition-ink);
+  display: grid;
+  place-items: center;
+  color: var(--edition-ink);
+}
+
+/* Brick is the one disc dark enough to need the light ink. */
+.eatw .piles li:nth-child(4) .disc {
+  color: var(--cream);
+}
+
+.eatw .disc svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.eatw .pile h3 {
+  font-variation-settings: "wdth" 108, "wght" 900;
+  text-transform: uppercase;
+  font-size: 1.3rem;
+  margin: 0.85rem 0 0;
+  letter-spacing: -0.02em;
+}
+
+.eatw .pile p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9125rem;
+  line-height: 1.45;
+  color: var(--edition-ink-soft);
+}
+
+.eatw .pile .example {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 3px solid var(--edition-ink);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--edition-ink);
+}
+
+.eatw .sticker {
+  position: absolute;
+  top: -0.85rem;
+  right: -0.6rem;
+  background: var(--fluo);
+  color: var(--edition-ink);
+  font-variation-settings: "wdth" 80, "wght" 900;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.6rem;
+  transform: rotate(8deg);
+  border: 2px solid var(--edition-ink);
+}
+
+/* The rules --------------------------------------------------------------- */
+.eatw .rules {
+  list-style: none;
+  counter-reset: rule;
+  margin: 2.25rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 3px solid var(--edition-ink);
+  background: var(--edition-ink);
+  gap: 0;
+}
+
+@media (max-width: 44rem) {
+  .eatw .rules {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eatw .rules li {
+  counter-increment: rule;
+  background: var(--cream);
+  padding: 1.3rem 1.4rem;
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  /* Outline rather than a border, so the 1px hairlines between cells do not
+     double up into a 2px rule down the middle of the grid. */
+  outline: 1.5px solid var(--edition-ink);
+}
+
+.eatw .rules li::before {
+  content: counter(rule);
+  font-family: var(--font-edition-display), Impact, sans-serif;
+  font-variation-settings: "wdth" 122, "wght" 900;
+  font-size: 2.5rem;
+  line-height: 0.78;
+  color: var(--fluo-deep);
+  flex: none;
+  width: 2rem;
+}
+
+.eatw .rules h3 {
+  font-variation-settings: "wdth" 100, "wght" 800;
+  text-transform: uppercase;
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.eatw .rules p {
+  margin: 0.3rem 0 0;
+  font-size: 0.9125rem;
+  line-height: 1.45;
+  color: var(--edition-ink-soft);
+}
+
+/* The money --------------------------------------------------------------- */
+.eatw .money {
+  margin-top: clamp(2.5rem, 6vw, 4.25rem);
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  align-items: center;
+}
+
+.eatw .note {
+  border: 3px solid var(--edition-ink);
+  background: var(--cream);
+  padding: 1.4rem;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    oklch(0.55 0.1 205 / 0.1) 0 6px,
+    transparent 6px 13px
+  );
+  transform: rotate(-1.5deg);
+}
+
+.eatw .money .note-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-variation-settings: "wdth" 80, "wght" 800;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eatw .money .note-figure {
+  font-variation-settings: "wdth" 125, "wght" 900;
+  font-size: clamp(3rem, 9vw, 4.75rem);
+  line-height: 0.85;
+  text-align: center;
+  margin: 0.8rem 0;
+  color: var(--brick-deep);
+  letter-spacing: -0.04em;
+}
+
+.eatw .money .note-figure small {
+  display: block;
+  font-size: 0.28em;
+  letter-spacing: 0.16em;
+  color: var(--edition-ink);
+  margin-top: 0.65rem;
+  font-variation-settings: "wdth" 82, "wght" 800;
+}
+
+/* Writing the deck -------------------------------------------------------- */
+.eatw pre {
+  margin: 1.6rem 0 0;
+  background: var(--edition-ink);
+  color: var(--cream);
+  padding: 1.15rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.75;
+  box-shadow: inset 0 0 0 3px var(--brick);
+}
+
+.eatw pre b {
+  color: var(--mustard);
+  font-weight: 400;
+}
+
+.eatw code,
+.eatw .literal {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+.eatw .literal {
+  font-size: 0.9em;
+  background: var(--cream-dim);
+  padding: 0.1em 0.35em;
+}
+
+.eatw .starter {
+  margin-top: 1.75rem;
+  border: 3px solid var(--edition-ink);
+  background: var(--cream-dim);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  scroll-margin-top: 2rem;
+}
+
+.eatw .starter h3 {
+  font-variation-settings: "wdth" 106, "wght" 900;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.eatw footer {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  border-top: 8px solid var(--mustard);
+  padding-top: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--cream);
+  font-size: 0.85rem;
+}
+
+/* Tailwind's reset drops link underlines, and colour alone is not enough of a
+   signal against copy this heavy. Prose links carry a rule; buttons and the
+   masthead do not. */
+.eatw a:not(.btn):not(.mark) {
+  color: var(--brick-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.eatw .on-brick a:not(.btn):not(.mark),
+.eatw footer a:not(.btn):not(.mark) {
+  color: var(--cream);
+  text-decoration-color: var(--mustard);
+}
+
+.eatw :where(a, button):focus-visible {
+  outline: 3px solid var(--mustard);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eatw * {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -100,19 +100,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <StructuredData />
         {children}
-        <footer className="mx-auto w-full max-w-5xl px-6 pb-10">
-          <div className="rule-dashed" />
-          <p className="mt-5 text-[0.8125rem] text-ink-soft">
-            Made by{" "}
-            <a
-              href="https://karol.gajda.com"
-              className="underline decoration-rule underline-offset-4 transition-colors hover:text-ink hover:decoration-ink"
-            >
-              Karol Gajda
-            </a>
-            .
-          </p>
-        </footer>
       </body>
     </html>
   );
