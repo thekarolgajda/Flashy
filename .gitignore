@@ -49,3 +49,6 @@ next-env.d.ts
 
 # generated deck, kept out of a public repo
 /EnoughAboutTheWeather.pdf
+
+# working copy of the sample deck; the published one is public/enough-about-the-weather-sample.csv
+/EnoughAboutTheWeatherSampleQuestions.csv
