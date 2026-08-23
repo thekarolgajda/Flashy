@@ -207,8 +207,9 @@ export default function EnoughAboutTheWeatherPage() {
             Only <span className="font-semibold">Seriously?</span> cards pay. The amount is printed
             on the card, from{" "}
             <span className="font-mono text-[0.9375rem] text-tangerine-deep">$1</span> to{" "}
-            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$5</span>, and it&rsquo;s
-            handed over as soon as the answer is given.
+            <span className="font-mono text-[0.9375rem] text-tangerine-deep">$5</span>. We settle up
+            at the end of the night, but when the money actually changes hands is up to whoever is
+            playing.
           </p>
           <p className="mt-5 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
             One adult banks the whole game. Nobody else chips in, and there&rsquo;s no pot to divide
