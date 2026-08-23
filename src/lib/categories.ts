@@ -54,7 +54,7 @@ const CATEGORIES: Category[] = [
      * one indistinct blob.
      */
     id: "mixed",
-    matches: /\b(serious|cring\w*|awkward|embarrassing)\b/,
+    matches: /\b(serious\w*|cring\w*|awkward|embarrassing)\b/,
     stroke:
       "M1.5 4 A2 2 0 0 1 3.5 2 L9.5 2 A2 2 0 0 1 11.5 4 L11.5 8 A5 5 0 0 1 1.5 8 Z M4.2 9.2 Q6.5 11.4 8.8 9.2 M12.5 11 A2 2 0 0 1 14.5 9 L20.5 9 A2 2 0 0 1 22.5 11 L22.5 15 A5 5 0 0 1 12.5 15 Z M15.2 17.4 Q17.5 15.2 19.8 17.4",
     fill:
