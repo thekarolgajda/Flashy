@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Demo recordings and the throwaway scripts that capture them. Not app
+    // code, not committed, and linting it only ever reports on scratch files.
+    "Presentation/**",
   ]),
 ]);
 
