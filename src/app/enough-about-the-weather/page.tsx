@@ -182,9 +182,6 @@ export default function EnoughAboutTheWeatherPage() {
         <h2 className="font-display text-[2rem] leading-none font-bold tracking-[-0.02em]">
           The four piles
         </h2>
-        <p className="mt-4 max-w-[62ch] text-[1.0625rem] leading-relaxed text-ink-soft">
-          Every card names its pile on the front, above the mark.
-        </p>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {PILES.map((pile) => (
             <Pile key={pile.front} {...pile} />
