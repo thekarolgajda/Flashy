@@ -102,7 +102,11 @@
   margin: 0;
   text-transform: uppercase;
   color: var(--cream);
-  font-size: clamp(3rem, 13.5vw, 10.5rem);
+  /* The vw term is set by the last line, not the first: "Weather!" is held on
+     one line and set at 0.92em in an extended cut, so it is the widest thing
+     the hero has to fit. At 13.5vw it overran a 320px screen and the lid
+     clipped the exclamation point off. */
+  font-size: clamp(2.5rem, 12.8vw, 10.5rem);
   line-height: 0.8;
   letter-spacing: -0.045em;
   font-variation-settings: "wdth" 120, "wght" 900;
@@ -115,7 +119,11 @@
   font-size: 0.56em;
   font-variation-settings: "wdth" 86, "wght" 800;
   letter-spacing: 0.005em;
-  margin: 0.1em 0;
+  /* The stack is set at line-height 0.8, which on a face this heavy leaves the
+     caps of one line sitting on the baseline of the last. The drop shadow eats
+     what is left, so the middle line buys its own air back. These are l2's own
+     em, which is 0.56 of the h1, so they read smaller than they look. */
+  margin: 0.26em 0 0.24em;
 }
 
 /* The last line is held on one line so the exclamation point stays attached
