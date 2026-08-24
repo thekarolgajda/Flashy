@@ -173,10 +173,6 @@ export default function EnoughAboutTheWeatherPage() {
             <br />
             <em>One of them pays.</em>
           </h2>
-          <p className="sub">
-            You write the questions yourselves and sort them as you go. That part is the game, not
-            the setup for it.
-          </p>
           <ul className="piles">
             {PILES.map((pile) => (
               <Pile key={pile.front} {...pile} />
@@ -186,7 +182,7 @@ export default function EnoughAboutTheWeatherPage() {
 
         <section className="panel" id="rules">
           <h2 className="display">How it&rsquo;s played</h2>
-          <p className="sub">Eight rules. That&rsquo;s all of them.</p>
+          <p className="sub">Eight &ldquo;rules&rdquo;.</p>
           <ol className="rules">
             {RULES.map((rule) => (
               <li key={rule.title}>
